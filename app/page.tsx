@@ -1,40 +1,108 @@
+"use client";
+
+import { useState } from "react";
+
 export default function Home() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-white text-neutral-800 font-inter">
-      {/* Navigation Bar */}
-      <nav className="relative flex items-center px-8 py-5 border-b border-neutral-200 bg-white">
-        {/* Site Name (Left) */}
-        <div className="flex-1">
-          <span className="text-xl font-semibold tracking-tight text-blue-600">Lendly</span>
-        </div>
-        {/* Centered Tabs */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-6 text-sm font-normal">
-          <button className="hover:text-blue-500 transition-colors">Home</button>
-          <button className="hover:text-blue-500 transition-colors">Categories</button>
-          <button className="hover:text-blue-500 transition-colors">About</button>
-          <button className="hover:text-blue-500 transition-colors">How it Works</button>
-          <button className="hover:text-blue-500 transition-colors">Contact</button>
-        </div>
-        {/* Profile Picture (Right) */}
-        <div className="flex-1 flex justify-end">
-          <button className="w-10 h-10 rounded-full bg-neutral-200 hover:bg-blue-100 flex items-center justify-center transition">
-            {/* Replace with <Image ... /> for real profile pic */}
-            <span className="text-neutral-500 text-lg font-bold">P</span>
-          </button>
-        </div>
-      </nav>
+      {/* Top Menu Bar */}
+      <header>
+        <nav className="flex items-center px-8 py-5 border-b border-neutral-200 bg-white">
+          {/* Site Name (Left) */}
+          <div className="flex-1">
+            <span className="text-xl font-semibold tracking-tight text-blue-600">
+              Lendly
+            </span>
+          </div>
+          {/* Desktop Menu */}
+          <div className="hidden md:flex gap-6 text-sm font-normal">
+            <button className="hover:text-blue-500 transition-colors">
+              Home
+            </button>
+            <button className="hover:text-blue-500 transition-colors">
+              Categories
+            </button>
+            <button className="hover:text-blue-500 transition-colors">
+              About
+            </button>
+            <button className="hover:text-blue-500 transition-colors">
+              How it Works
+            </button>
+            <button className="hover:text-blue-500 transition-colors">
+              Contact
+            </button>
+          </div>
+          {/* Mobile Menu Toggle */}
+          <div className="flex md:hidden">
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="text-blue-600 focus:outline-none"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 8h16M4 16h16"
+                />
+              </svg>
+            </button>
+          </div>
+          {/* Profile Picture (Right) */}
+          <div className="flex-1 flex justify-end">
+            <button className="w-10 h-10 rounded-full bg-neutral-200 hover:bg-blue-100 flex items-center justify-center transition">
+              <span className="text-neutral-500 text-lg font-bold">P</span>
+            </button>
+          </div>
+        </nav>
+        {/* Mobile Dropdown Menu */}
+        {menuOpen && (
+          <div className="md:hidden bg-white border-b border-neutral-200 px-8 py-4">
+            <button className="block w-full text-left hover:text-blue-500 transition-colors mb-2">
+              Home
+            </button>
+            <button className="block w-full text-left hover:text-blue-500 transition-colors mb-2">
+              Categories
+            </button>
+            <button className="block w-full text-left hover:text-blue-500 transition-colors mb-2">
+              About
+            </button>
+            <button className="block w-full text-left hover:text-blue-500 transition-colors mb-2">
+              How it Works
+            </button>
+            <button className="block w-full text-left hover:text-blue-500 transition-colors">
+              Contact
+            </button>
+          </div>
+        )}
+      </header>
 
       {/* Hero Section */}
-      <section className="py-20 px-6 text-center" style={{ backgroundColor: "#f0f6ff" }}>
-        <h1 className="text-3xl sm:text-4xl font-semibold mb-3 text-blue-700">Welcome to Lendly</h1>
+      <section
+        className="py-20 px-6 text-center"
+        style={{ backgroundColor: "#f0f6ff" }}
+      >
+        <h1 className="text-3xl sm:text-4xl font-semibold mb-3 text-blue-700">
+          Welcome to Lendly
+        </h1>
         <p className="text-base sm:text-lg max-w-xl mx-auto text-blue-900/70">
-          Share what you own, borrow what you need. Connect with your community to save money and reduce waste.
+          Share what you own, borrow what you need. Connect with your community to
+          save money and reduce waste.
         </p>
       </section>
 
       {/* Categories */}
       <section className="px-6 py-10 max-w-6xl mx-auto">
-        <h2 className="text-lg font-medium mb-5 text-neutral-800">Browse by Category</h2>
+        <h2 className="text-lg font-medium mb-5 text-neutral-800">
+          Browse by Category
+        </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 text-center text-xs">
           {[
             "Tools",
@@ -48,7 +116,7 @@ export default function Home() {
             "Sports",
             "Clothing",
             "Garden",
-            "Art & Craft"
+            "Art & Craft",
           ].map((cat) => (
             <div
               key={cat}
@@ -60,13 +128,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Recommendations Section - moved above search bar */}
+      {/* Recommendations Section */}
       <section className="max-w-6xl mx-auto px-4 py-12">
-        <h2 className="text-xl font-semibold mb-6 text-blue-700">Recommended for you</h2>
+        <h2 className="text-xl font-semibold mb-6 text-blue-700">
+          Recommended for you
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Card 1 */}
           <div className="bg-white rounded-xl border border-blue-100 shadow-sm p-4 flex flex-col gap-3">
-            <span className="font-medium text-blue-600 mb-2">Outdoor Gear Picks</span>
+            <span className="font-medium text-blue-600 mb-2">
+              Outdoor Gear Picks
+            </span>
             <div className="grid grid-cols-2 gap-2">
               <div className="bg-blue-50 rounded-lg flex flex-col items-center justify-center p-3">
                 <span className="text-2xl">⛺</span>
@@ -77,7 +149,9 @@ export default function Home() {
                 <span className="text-xs mt-1 text-blue-700">Bike</span>
               </div>
             </div>
-            <button className="mt-2 text-xs text-blue-500 hover:underline self-start">See more</button>
+            <button className="mt-2 text-xs text-blue-500 hover:underline self-start">
+              See more
+            </button>
           </div>
           {/* Card 2 */}
           <div className="bg-white rounded-xl border border-blue-100 shadow-sm p-4 flex flex-col gap-3">
@@ -92,7 +166,9 @@ export default function Home() {
                 <span className="text-xs mt-1 text-blue-700">Ladder</span>
               </div>
             </div>
-            <button className="mt-2 text-xs text-blue-500 hover:underline self-start">See more</button>
+            <button className="mt-2 text-xs text-blue-500 hover:underline self-start">
+              See more
+            </button>
           </div>
           {/* Card 3 */}
           <div className="bg-white rounded-xl border border-blue-100 shadow-sm p-4 flex flex-col gap-3">
@@ -103,15 +179,19 @@ export default function Home() {
                 <span className="text-xs mt-1 text-blue-700">Board Game</span>
               </div>
               <div className="bg-blue-50 rounded-lg flex flex-col items-center justify-center p-3">
-                <span className="text-2xl">📷</span>
-                <span className="text-xs mt-1 text-blue-700">Camera</span>
+                <span className="text-2xl">🎮</span>
+                <span className="text-xs mt-1 text-blue-700">Console</span>
               </div>
             </div>
-            <button className="mt-2 text-xs text-blue-500 hover:underline self-start">See more</button>
+            <button className="mt-2 text-xs text-blue-500 hover:underline self-start">
+              See more
+            </button>
           </div>
           {/* Card 4 */}
           <div className="bg-white rounded-xl border border-blue-100 shadow-sm p-4 flex flex-col gap-3">
-            <span className="font-medium text-blue-600 mb-2">Kitchen & Books</span>
+            <span className="font-medium text-blue-600 mb-2">
+              Kitchen & Books
+            </span>
             <div className="grid grid-cols-2 gap-2">
               <div className="bg-blue-50 rounded-lg flex flex-col items-center justify-center p-3">
                 <span className="text-2xl">🍳</span>
@@ -119,10 +199,12 @@ export default function Home() {
               </div>
               <div className="bg-blue-50 rounded-lg flex flex-col items-center justify-center p-3">
                 <span className="text-2xl">📚</span>
-                <span className="text-xs mt-1 text-blue-700">Book Set</span>
+                <span className="text-xs mt-1 text-blue-700">Books</span>
               </div>
             </div>
-            <button className="mt-2 text-xs text-blue-500 hover:underline self-start">See more</button>
+            <button className="mt-2 text-xs text-blue-500 hover:underline self-start">
+              See more
+            </button>
           </div>
         </div>
       </section>
@@ -135,7 +217,6 @@ export default function Home() {
           placeholder="Search to borrow..."
           className="border border-neutral-200 rounded-lg px-4 py-2 w-full max-w-2xl text-base bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
         />
-
         {/* Items Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
           {[
@@ -161,7 +242,9 @@ export default function Home() {
               </div>
               {/* Distance and Details button */}
               <div className="flex justify-between items-center mt-1">
-                <span className="text-xs text-neutral-500">📍 {distance} away</span>
+                <span className="text-xs text-neutral-500">
+                  📍 {distance} away
+                </span>
                 <button className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-full transition">
                   Details
                 </button>
