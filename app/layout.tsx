@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import NavigationBar from "./components/NavigationBar";
+import ChatWidget from "./components/ChatWidget";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,14 +24,17 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased relative`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased relative`}
+      >
         {/* Persistent Navigation Bar */}
         <NavigationBar />
 
         {/* Render Page-specific Content */}
         <main>{children}</main>
-        
-        {/* Removed Global Background Blobs & Gradients */}
+
+        {/* Chat Widget (plus and question mark buttons, with chat sidebar) */}
+        <ChatWidget />
       </body>
     </html>
   );
