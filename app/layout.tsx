@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import NavigationBar from "./components/NavigationBar"; // import your new component
+import NavigationBar from "./components/NavigationBar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,23 +23,14 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased relative`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased relative`}>
         {/* Persistent Navigation Bar */}
         <NavigationBar />
 
         {/* Render Page-specific Content */}
         <main>{children}</main>
-
-        {/* Global Background Blobs & Gradients */}
-        <div className="fixed left-0 top-0 h-full w-2 bg-gradient-to-b from-blue-100 via-pink-100 to-transparent opacity-40 -z-10" />
-        <div className="fixed right-0 top-0 h-full w-2 bg-gradient-to-t from-green-100 via-blue-100 to-transparent opacity-40 -z-10" />
-        <div className="absolute top-0 left-0 w-64 h-64 bg-blue-100 rounded-full blur-2xl opacity-40 -z-10" />
-        <div className="absolute bottom-0 right-0 w-72 h-72 bg-pink-100 rounded-full blur-2xl opacity-30 -z-10" />
-        <div className="absolute top-24 right-1/3 w-56 h-56 bg-yellow-100 rounded-full blur-2xl opacity-30 -z-10" />
-        <div className="absolute bottom-24 left-1/4 w-40 h-40 bg-green-100 rounded-full blur-2xl opacity-30 -z-10" />
-        <div className="absolute top-1/2 left-0 w-32 h-32 bg-purple-100 rounded-full blur-2xl opacity-30 -z-10" />
+        
+        {/* Removed Global Background Blobs & Gradients */}
       </body>
     </html>
   );
