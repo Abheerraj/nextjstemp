@@ -33,9 +33,16 @@ export default function RootLayout({
         {/* Render Page-specific Content */}
         <main>{children}</main>
 
+        {/* Footer */}
+        <footer className="bg-white py-5 text-center text-xs text-neutral-400 border-t border-neutral-200">
+          Powered by Next.js · Built for generous neighbours 🤝
+        </footer>
+
         {/* Chat Widget (plus and question mark buttons, with chat sidebar) */}
         <ChatWidget />
       </body>
     </html>
   );
 }
+
+

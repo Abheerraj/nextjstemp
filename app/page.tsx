@@ -173,11 +173,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-white mt-16 py-5 text-center text-xs text-neutral-400 border-t border-neutral-200">
-        Powered by Next.js · Built for generous neighbours 🤝
-      </footer>
-
       {/* Global Background Blobs & Gradients */}
       <div className="fixed left-0 top-0 h-full w-2 bg-gradient-to-b from-blue-100 via-pink-100 to-transparent opacity-40 -z-10" />
       <div className="fixed right-0 top-0 h-full w-2 bg-gradient-to-t from-green-100 via-blue-100 to-transparent opacity-40 -z-10" />
