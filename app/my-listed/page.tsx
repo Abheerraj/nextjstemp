@@ -7,8 +7,9 @@ import Link from "next/link";
 
 export default function MyListedPage() {
   const { isDarkMode } = useDarkMode();
-  const { listedItems } = useListedItems();
+  const { listedItems, removeItem } = useListedItems();
   const [activeTab, setActiveTab] = useState("active");
+  const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
 
   const getFilteredItems = () => {
     switch (activeTab) {
@@ -41,6 +42,11 @@ export default function MyListedPage() {
       default:
         return isDarkMode ? "bg-gray-800" : "bg-gray-100";
     }
+  };
+
+  const handleUnlist = (id: number) => {
+    removeItem(id);
+    setConfirmDelete(null);
   };
 
   return (
@@ -243,6 +249,7 @@ export default function MyListedPage() {
                     </div>
                   </div>
 
+                  {/* Action Buttons */}
                   <div className="space-y-2">
                     <button
                       className={`w-full py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200 ${
@@ -253,15 +260,54 @@ export default function MyListedPage() {
                     >
                       View Details
                     </button>
-                    <button
-                      className={`w-full py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200 border ${
-                        isDarkMode 
-                          ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
-                          : 'border-gray-300 text-neutral-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      Edit Item
-                    </button>
+                    
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        className={`py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200 border ${
+                          isDarkMode 
+                            ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
+                            : 'border-gray-300 text-neutral-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        Edit
+                      </button>
+                      
+                      {confirmDelete === item.id ? (
+                        <div className="flex space-x-1">
+                          <button
+                            onClick={() => handleUnlist(item.id)}
+                            className="flex-1 py-2 px-2 rounded-lg text-xs font-medium bg-red-600 hover:bg-red-700 text-white transition-all duration-200"
+                          >
+                            Confirm
+                          </button>
+                          <button
+                            onClick={() => setConfirmDelete(null)}
+                            className={`flex-1 py-2 px-2 rounded-lg text-xs font-medium transition-all duration-200 border ${
+                              isDarkMode 
+                                ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
+                                : 'border-gray-300 text-neutral-700 hover:bg-gray-50'
+                            }`}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setConfirmDelete(item.id)}
+                          className={`py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200 ${
+                            item.status === "borrowed"
+                              ? isDarkMode
+                                ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                              : 'bg-red-600 hover:bg-red-700 text-white'
+                          }`}
+                          disabled={item.status === "borrowed"}
+                          title={item.status === "borrowed" ? "Cannot unlist borrowed items" : "Unlist item"}
+                        >
+                          Unlist
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
