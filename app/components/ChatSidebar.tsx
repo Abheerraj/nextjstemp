@@ -24,21 +24,21 @@ export default function ChatSidebar({ isOpen, onClose }: ChatSidebarProps) {
     const lowerMessage = userMessage.toLowerCase();
     
     if (lowerMessage.includes("hello") || lowerMessage.includes("hi")) {
-      return "Hello! I'm here to help you with Lendly. What can I assist you with today?";
+      return "Hello! I&apos;m here to help you with Lendly. What can I assist you with today?";
     } else if (lowerMessage.includes("how") && lowerMessage.includes("work")) {
-      return "Lendly connects neighbors to share items! You can list items you own or browse what others are sharing. It's a great way to save money and reduce waste.";
+      return "Lendly connects neighbors to share items! You can list items you own or browse what others are sharing. It&apos;s a great way to save money and reduce waste.";
     } else if (lowerMessage.includes("list") || lowerMessage.includes("add")) {
-      return "To list an item, click the '+' button in the navigation or go to the List Item page. Fill out the details and your item will be available for others to borrow!";
+      return "To list an item, click the &apos;+&apos; button in the navigation or go to the List Item page. Fill out the details and your item will be available for others to borrow!";
     } else if (lowerMessage.includes("borrow") || lowerMessage.includes("find")) {
       return "You can browse items by category or search for specific things you need. When you find something, you can contact the owner to arrange borrowing it.";
     } else if (lowerMessage.includes("contact") || lowerMessage.includes("help")) {
-      return "You can reach out through our Contact page or use this chat for quick questions. I'm here to help with any Lendly-related questions!";
+      return "You can reach out through our Contact page or use this chat for quick questions. I&apos;m here to help with any Lendly-related questions!";
     } else if (lowerMessage.includes("account") || lowerMessage.includes("profile")) {
       return "You can manage your account settings, update your profile, and view your activity in the Account section from the profile dropdown.";
     } else if (lowerMessage.includes("dark") || lowerMessage.includes("theme")) {
       return "You can switch between light and dark mode using the Appearance settings in your profile dropdown. The theme will be saved for your next visit!";
     } else {
-      return "I'm here to help with Lendly! You can ask me about how the platform works, listing items, borrowing, or managing your account. What would you like to know?";
+      return "I&apos;m here to help with Lendly! You can ask me about how the platform works, listing items, borrowing, or managing your account. What would you like to know?";
     }
   };
 
@@ -156,7 +156,7 @@ export default function ChatSidebar({ isOpen, onClose }: ChatSidebarProps) {
                 isDarkMode ? "text-gray-300" : "text-gray-700"
               }`}
             >
-              Hi there! I'm your Lendly assistant
+              Hi there! I&apos;m your Lendly assistant
             </h3>
             <p
               className={`text-sm ${
