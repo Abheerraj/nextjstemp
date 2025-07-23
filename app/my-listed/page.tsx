@@ -3,46 +3,11 @@
 import { useState } from "react";
 import { useDarkMode } from "../context/DarkModeContext";
 import { useListedItems } from "../context/ListedItemsContext";
-import Link from "next/link";
 
 export default function MyListedPage() {
   const { isDarkMode } = useDarkMode();
   const { listedItems, removeItem } = useListedItems();
-  const [activeTab, setActiveTab] = useState("active");
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
-
-  const getFilteredItems = () => {
-    switch (activeTab) {
-      case "available":
-        return listedItems.filter(item => item.status === "available");
-      case "borrowed":
-        return listedItems.filter(item => item.status === "borrowed");
-      default:
-        return listedItems;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "available":
-        return isDarkMode ? "text-green-400" : "text-green-600";
-      case "borrowed":
-        return isDarkMode ? "text-blue-400" : "text-blue-600";
-      default:
-        return isDarkMode ? "text-gray-400" : "text-gray-600";
-    }
-  };
-
-  const getStatusBg = (status: string) => {
-    switch (status) {
-      case "available":
-        return isDarkMode ? "bg-green-900" : "bg-green-100";
-      case "borrowed":
-        return isDarkMode ? "bg-blue-900" : "bg-blue-100";
-      default:
-        return isDarkMode ? "bg-gray-800" : "bg-gray-100";
-    }
-  };
 
   const handleUnlist = (id: number) => {
     removeItem(id);
@@ -53,7 +18,6 @@ export default function MyListedPage() {
     <div className={`min-h-screen font-inter ${
       isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-neutral-800'
     }`}>
-      {/* Hero Section */}
       <section
         className="py-20 px-6 text-center"
         style={{ 
@@ -68,265 +32,112 @@ export default function MyListedPage() {
         <p className={`text-base sm:text-lg max-w-xl mx-auto ${
           isDarkMode ? 'text-purple-200' : 'text-blue-900/70'
         }`}>
-          Manage the items you've shared with your community
+          Manage your shared items
         </p>
       </section>
 
-      {/* Listed Items */}
       <section className="px-6 py-10 max-w-6xl mx-auto">
-        <div
-          className="rounded-xl border shadow-2xl p-8"
-          style={{
-            backgroundColor: isDarkMode ? "#1f1f23" : "#f8f5ff",
-            borderColor: isDarkMode ? "#374151" : "#e0d4ff",
-            boxShadow: isDarkMode 
-              ? "0 25px 50px -12px rgba(139, 92, 246, 0.4)" 
-              : "0 25px 50px -12px rgba(139, 92, 246, 0.25)",
-          }}
-        >
-          <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
-            <h2 className={`text-2xl font-semibold ${
-              isDarkMode ? 'text-purple-300' : 'text-purple-700'
+        {listedItems.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">📦</div>
+            <h3 className={`text-lg font-medium mb-2 ${
+              isDarkMode ? 'text-gray-300' : 'text-neutral-700'
             }`}>
-              Your Items
-            </h2>
-            <Link
-              href="/listitem"
-              className={`mt-4 sm:mt-0 px-6 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
-                isDarkMode 
-                  ? 'bg-purple-700 hover:bg-purple-600 text-white' 
-                  : 'bg-purple-600 hover:bg-purple-700 text-white'
-              }`}
-            >
-              + List New Item
-            </Link>
+              You haven&apos;t listed any items yet
+            </h3>
+            <p className={`text-sm ${
+              isDarkMode ? 'text-gray-400' : 'text-neutral-500'
+            }`}>
+              Start sharing your items with the community
+            </p>
           </div>
-
-          {/* Filter Tabs */}
-          <div className="flex space-x-1 mb-6">
-            {[
-              { key: "active", label: "All Items", count: listedItems.length },
-              { key: "available", label: "Available", count: listedItems.filter(i => i.status === "available").length },
-              { key: "borrowed", label: "Borrowed", count: listedItems.filter(i => i.status === "borrowed").length },
-            ].map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  activeTab === tab.key
-                    ? isDarkMode
-                      ? 'bg-purple-700 text-white'
-                      : 'bg-purple-600 text-white'
-                    : isDarkMode
-                    ? 'text-gray-400 hover:text-white hover:bg-gray-700'
-                    : 'text-neutral-600 hover:text-neutral-800 hover:bg-purple-50'
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {listedItems.map((item) => (
+              <div
+                key={item.id}
+                className={`flex flex-col gap-3 p-4 border rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ${
+                  isDarkMode 
+                    ? 'bg-gray-800 border-gray-600' 
+                    : 'bg-white border-purple-200'
                 }`}
               >
-                {tab.label} ({tab.count})
-              </button>
-            ))}
-          </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xl">{item.image}</span>
+                  <span className={`text-base font-medium ${
+                    isDarkMode ? 'text-white' : 'text-neutral-800'
+                  }`}>{item.name}</span>
+                  <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                    item.status === 'available' 
+                      ? isDarkMode 
+                        ? 'bg-green-900 text-green-400' 
+                        : 'bg-green-100 text-green-600'
+                      : isDarkMode
+                        ? 'bg-blue-900 text-blue-400'
+                        : 'bg-blue-100 text-blue-600'
+                  }`}>
+                    {item.status === 'available' ? 'Available' : 'Borrowed'}
+                  </span>
+                </div>
 
-          {getFilteredItems().length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">📦</div>
-              <h3 className={`text-lg font-medium mb-2 ${
-                isDarkMode ? 'text-gray-300' : 'text-neutral-700'
-              }`}>
-                No items found
-              </h3>
-              <p className={`text-sm mb-4 ${
-                isDarkMode ? 'text-gray-400' : 'text-neutral-500'
-              }`}>
-                {activeTab === "active" 
-                  ? "You haven't listed any items yet." 
-                  : `No ${activeTab} items at the moment.`}
-              </p>
-              {activeTab === "active" && (
-                <Link
-                  href="/listitem"
-                  className={`inline-block px-6 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-105 ${
-                    isDarkMode 
-                      ? 'bg-purple-700 hover:bg-purple-600 text-white' 
-                      : 'bg-purple-600 hover:bg-purple-700 text-white'
-                  }`}
-                >
-                  List Your First Item
-                </Link>
-              )}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {getFilteredItems().map((item) => (
                 <div
-                  key={item.id}
-                  className={`p-6 rounded-xl border transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-                    isDarkMode 
-                      ? 'bg-gray-800 border-gray-700 hover:border-purple-500' 
-                      : 'bg-white border-purple-200 hover:border-purple-300'
-                  }`}
+                  className="rounded-lg h-32 w-full flex items-center justify-center text-xs"
+                  style={{
+                    backgroundColor: isDarkMode ? "#374151" : "#faf5ff",
+                    color: isDarkMode ? "#c084fc" : "#a855f7",
+                  }}
                 >
-                  <div className="text-center mb-4">
-                    <div className="text-4xl mb-3">{item.image}</div>
-                    <h3 className={`text-lg font-semibold mb-1 ${
-                      isDarkMode ? 'text-white' : 'text-neutral-800'
-                    }`}>
-                      {item.name}
-                    </h3>
-                    <p className={`text-sm ${
-                      isDarkMode ? 'text-gray-400' : 'text-neutral-600'
-                    }`}>
-                      {item.category} • {item.condition}
-                    </p>
-                  </div>
+                  Photo Preview
+                </div>
 
-                  <div className="space-y-3 mb-4">
-                    <div className="flex justify-between items-center">
-                      <span className={`text-xs ${
-                        isDarkMode ? 'text-gray-400' : 'text-neutral-500'
-                      }`}>
-                        Status:
-                      </span>
-                      <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-                        getStatusColor(item.status)
-                      } ${getStatusBg(item.status)}`}>
-                        {item.status === 'available' ? 'Available' : 'Borrowed'}
-                      </span>
-                    </div>
-
-                    {item.status === "borrowed" && (
-                      <div className="flex justify-between items-center">
-                        <span className={`text-xs ${
-                          isDarkMode ? 'text-gray-400' : 'text-neutral-500'
-                        }`}>
-                          Borrowed by:
-                        </span>
-                        <span className={`text-xs font-medium ${
-                          isDarkMode ? 'text-white' : 'text-neutral-800'
-                        }`}>
-                          {item.borrowedBy}
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="flex justify-between items-center">
-                      <span className={`text-xs ${
-                        isDarkMode ? 'text-gray-400' : 'text-neutral-500'
-                      }`}>
-                        Created:
-                      </span>
-                      <span className={`text-xs font-medium ${
-                        isDarkMode ? 'text-white' : 'text-neutral-800'
-                      }`}>
-                        {new Date(item.dateCreated).toLocaleDateString()}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between items-center">
-                      <span className={`text-xs ${
-                        isDarkMode ? 'text-gray-400' : 'text-neutral-500'
-                      }`}>
-                        Views:
-                      </span>
-                      <span className={`text-xs font-medium ${
-                        isDarkMode ? 'text-white' : 'text-neutral-800'
-                      }`}>
-                        {item.views}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between items-center">
-                      <span className={`text-xs ${
-                        isDarkMode ? 'text-gray-400' : 'text-neutral-500'
-                      }`}>
-                        Requests:
-                      </span>
-                      <span className={`text-xs font-medium ${
-                        isDarkMode ? 'text-white' : 'text-neutral-800'
-                      }`}>
-                        {item.requests}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="space-y-2">
-                    <button
-                      className={`w-full py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200 ${
-                        isDarkMode 
-                          ? 'bg-purple-700 hover:bg-purple-600 text-white' 
-                          : 'bg-purple-600 hover:bg-purple-700 text-white'
-                      }`}
-                    >
-                      View Details
-                    </button>
-                    
-                    <div className="grid grid-cols-2 gap-2">
+                <div className="flex justify-between items-center">
+                  <span className={`text-xs ${
+                    isDarkMode ? 'text-gray-400' : 'text-neutral-500'
+                  }`}>
+                    Category: {item.category}
+                  </span>
+                  
+                  {confirmDelete === item.id ? (
+                    <div className="flex space-x-1">
                       <button
-                        className={`py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200 border ${
+                        onClick={() => handleUnlist(item.id)}
+                        className="text-white text-xs px-2 py-1 rounded-full bg-red-600 hover:bg-red-700 transition-all duration-200"
+                      >
+                        Confirm
+                      </button>
+                      <button
+                        onClick={() => setConfirmDelete(null)}
+                        className={`text-xs px-2 py-1 rounded-full transition-all duration-200 ${
                           isDarkMode 
-                            ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
-                            : 'border-gray-300 text-neutral-700 hover:bg-gray-50'
+                            ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                         }`}
                       >
-                        Edit
+                        Cancel
                       </button>
-                      
-                      {confirmDelete === item.id ? (
-                        <div className="flex space-x-1">
-                          <button
-                            onClick={() => handleUnlist(item.id)}
-                            className="flex-1 py-2 px-2 rounded-lg text-xs font-medium bg-red-600 hover:bg-red-700 text-white transition-all duration-200"
-                          >
-                            Confirm
-                          </button>
-                          <button
-                            onClick={() => setConfirmDelete(null)}
-                            className={`flex-1 py-2 px-2 rounded-lg text-xs font-medium transition-all duration-200 border ${
-                              isDarkMode 
-                                ? 'border-gray-600 text-gray-300 hover:bg-gray-700' 
-                                : 'border-gray-300 text-neutral-700 hover:bg-gray-50'
-                            }`}
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => setConfirmDelete(item.id)}
-                          className={`py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200 ${
-                            item.status === "borrowed"
-                              ? isDarkMode
-                                ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                              : 'bg-red-600 hover:bg-red-700 text-white'
-                          }`}
-                          disabled={item.status === "borrowed"}
-                          title={item.status === "borrowed" ? "Cannot unlist borrowed items" : "Unlist item"}
-                        >
-                          Unlist
-                        </button>
-                      )}
                     </div>
-                  </div>
+                  ) : (
+                    <button
+                      onClick={() => setConfirmDelete(item.id)}
+                      disabled={item.status === "borrowed"}
+                      className={`text-xs px-3 py-1 rounded-full transition-all duration-200 ${
+                        item.status === "borrowed"
+                          ? isDarkMode
+                            ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'bg-red-600 hover:bg-red-700 text-white'
+                      }`}
+                      title={item.status === "borrowed" ? "Cannot unlist borrowed items" : "Unlist item"}
+                    >
+                      Unlist
+                    </button>
+                  )}
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
-
-      {/* Background Elements */}
-      <div className={`fixed left-0 top-0 h-full w-2 opacity-40 -z-10 ${
-        isDarkMode 
-          ? 'bg-gradient-to-b from-purple-900 via-purple-800 to-transparent' 
-          : 'bg-gradient-to-b from-blue-100 via-pink-100 to-transparent'
-      }`} />
-      <div className={`fixed right-0 top-0 h-full w-2 opacity-40 -z-10 ${
-        isDarkMode 
-          ? 'bg-gradient-to-t from-purple-900 via-purple-800 to-transparent' 
-          : 'bg-gradient-to-t from-green-100 via-blue-100 to-transparent'
-      }`} />
     </div>
   );
 }

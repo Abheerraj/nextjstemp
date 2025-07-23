@@ -1,27 +1,43 @@
 "use client";
 
 import { useState } from "react";
-import { useDarkMode } from "./context/DarkModeContext";  // Changed from ../context to ./context
+import { useDarkMode } from "./context/DarkModeContext";
+import { useListedItems } from "./context/ListedItemsContext";
 
-export default function Home() {  // Changed from MyListedPage to Home
+export default function Home() {
   const { isDarkMode } = useDarkMode();
+  const { listedItems, removeItem } = useListedItems();
   const [searchQuery, setSearchQuery] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
 
-  // Sample items data
-  const allItems = [
-    { emoji: "🔧", item: "Drill", owner: "John", distance: "300m", category: "tools" },
-    { emoji: "🚲", item: "Bike", owner: "Alice", distance: "1.2km", category: "sports" },
-    { emoji: "🪜", item: "Ladder", owner: "Mike", distance: "600m", category: "tools" },
-    { emoji: "⛺", item: "Tent", owner: "Sarah", distance: "950m", category: "outdoor" },
-    { emoji: "📷", item: "Camera", owner: "Leo", distance: "2km", category: "electronics" },
-    { emoji: "🎲", item: "Board Game", owner: "Alex", distance: "850m", category: "games" },
-    { emoji: "🍳", item: "Frying Pan", owner: "Emma", distance: "400m", category: "kitchen" },
-    { emoji: "📚", item: "Textbook", owner: "David", distance: "700m", category: "books" },
-    { emoji: "🎸", item: "Guitar", owner: "Sophie", distance: "1.5km", category: "misc" },
-    { emoji: "🏓", item: "Ping Pong Table", owner: "Chris", distance: "1.8km", category: "sports" },
-    { emoji: "🔨", item: "Hammer", owner: "Mark", distance: "500m", category: "tools" },
-    { emoji: "🎯", item: "Dartboard", owner: "Lisa", distance: "1.1km", category: "games" },
+  // Sample items data (items from other users)
+  const sampleItems = [
+    { id: 101, emoji: "🔧", item: "Drill", owner: "John", distance: "300m", category: "tools", isOwn: false, status: "available" },
+    { id: 102, emoji: "🚲", item: "Bike", owner: "Alice", distance: "1.2km", category: "sports", isOwn: false, status: "available" },
+    { id: 103, emoji: "🪜", item: "Ladder", owner: "Mike", distance: "600m", category: "tools", isOwn: false, status: "available" },
+    { id: 104, emoji: "⛺", item: "Tent", owner: "Sarah", distance: "950m", category: "outdoor", isOwn: false, status: "available" },
+    { id: 105, emoji: "🍳", item: "Frying Pan", owner: "Emma", distance: "400m", category: "kitchen", isOwn: false, status: "available" },
+    { id: 106, emoji: "📚", item: "Textbook", owner: "David", distance: "700m", category: "books", isOwn: false, status: "available" },
+    { id: 107, emoji: "🎸", item: "Guitar", owner: "Sophie", distance: "1.5km", category: "misc", isOwn: false, status: "available" },
+    { id: 108, emoji: "🏓", item: "Ping Pong Table", owner: "Chris", distance: "1.8km", category: "sports", isOwn: false, status: "available" },
+    { id: 109, emoji: "🔨", item: "Hammer", owner: "Mark", distance: "500m", category: "tools", isOwn: false, status: "available" },
+    { id: 110, emoji: "🎯", item: "Dartboard", owner: "Lisa", distance: "1.1km", category: "games", isOwn: false, status: "available" },
   ];
+
+  // Convert your listed items to the same format and mark as your own
+  const ownItems = listedItems.map(item => ({
+    id: item.id,
+    emoji: item.image,
+    item: item.name,
+    owner: "You",
+    distance: "0m",
+    category: item.category.toLowerCase(),
+    isOwn: true,
+    status: item.status
+  }));
+
+  // Combine all items
+  const allItems = [...ownItems, ...sampleItems];
 
   // Filter items based on search query
   const filteredItems = allItems.filter(item => 
@@ -39,6 +55,11 @@ export default function Home() {  // Changed from MyListedPage to Home
 
   const clearSearch = () => {
     setSearchQuery("");
+  };
+
+  const handleUnlist = (id: number) => {
+    removeItem(id);
+    setConfirmDelete(null);
   };
 
   return (
@@ -318,27 +339,35 @@ export default function Home() {  // Changed from MyListedPage to Home
                 </p>
               </div>
             ) : (
-              displayItems.map(({ emoji, item, owner, distance, category }) => (
+              displayItems.map((itemData) => (
                 <div
-                  key={`${item}-${owner}`}
-                  className={`flex flex-col gap-2 p-4 border rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer ${
+                  key={`${itemData.item}-${itemData.owner}-${itemData.id}`}
+                  className={`flex flex-col gap-2 p-4 border rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer relative ${
                     isDarkMode 
                       ? 'bg-gray-800 border-gray-600' 
                       : 'bg-white border-purple-200'
-                  }`}
+                  } ${itemData.isOwn ? 'ring-2 ring-purple-400' : ''}`}
                   style={{
                     boxShadow: "0 10px 15px -3px rgba(139, 92, 246, 0.1)",
                   }}
                 >
+                  {/* Your Item Badge */}
+                  {itemData.isOwn && (
+                    <div className="absolute top-2 right-2 bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
+                      Your Item
+                    </div>
+                  )}
+
                   <div className="flex justify-between items-center">
-                    <span className="text-xl">{emoji}</span>
+                    <span className="text-xl">{itemData.emoji}</span>
                     <span className={`text-base font-medium ${
                       isDarkMode ? 'text-white' : 'text-neutral-800'
-                    }`}>{item}</span>
+                    }`}>{itemData.item}</span>
                     <span className={`text-xs ${
                       isDarkMode ? 'text-gray-400' : 'text-neutral-400'
-                    }`}>— {owner}</span>
+                    }`}>— {itemData.owner}</span>
                   </div>
+
                   {/* Photo box */}
                   <div
                     className="rounded-lg h-32 w-full flex items-center justify-center text-xs"
@@ -349,31 +378,92 @@ export default function Home() {  // Changed from MyListedPage to Home
                   >
                     Photo Preview
                   </div>
-                  {/* Distance and Details */}
+
+                  {/* Status for your items */}
+                  {itemData.isOwn && (
+                    <div className="flex justify-center">
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                        itemData.status === 'available' 
+                          ? isDarkMode 
+                            ? 'bg-green-900 text-green-400' 
+                            : 'bg-green-100 text-green-600'
+                          : isDarkMode
+                            ? 'bg-blue-900 text-blue-400'
+                            : 'bg-blue-100 text-blue-600'
+                      }`}>
+                        {itemData.status === 'available' ? 'Available' : 'Currently Borrowed'}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Distance and Details/Actions */}
                   <div className="flex justify-between items-center mt-1">
                     <span className={`text-xs ${
                       isDarkMode ? 'text-gray-400' : 'text-neutral-500'
                     }`}>
-                      📍 {distance} away
+                      📍 {itemData.distance} away
                     </span>
-                    <button
-                      className={`text-white text-xs px-3 py-1 rounded-full transition-all duration-200 shadow-md hover:shadow-lg ${
-                        isDarkMode ? 'hover:bg-purple-600' : 'hover:bg-purple-700'
-                      }`}
-                      style={{
-                        backgroundColor: isDarkMode ? "#7c3aed" : "#8b5cf6",
-                      }}
-                      onMouseEnter={(e) => {
-                        const target = e.target as HTMLButtonElement;
-                        target.style.backgroundColor = isDarkMode ? "#6d28d9" : "#7c3aed";
-                      }}
-                      onMouseLeave={(e) => {
-                        const target = e.target as HTMLButtonElement;
-                        target.style.backgroundColor = isDarkMode ? "#7c3aed" : "#8b5cf6";
-                      }}
-                    >
-                      Details
-                    </button>
+                    
+                    {itemData.isOwn ? (
+                      // Actions for your own items
+                      <div className="flex space-x-1">
+                        {confirmDelete === itemData.id ? (
+                          <>
+                            <button
+                              onClick={() => handleUnlist(itemData.id)}
+                              className="text-white text-xs px-2 py-1 rounded-full bg-red-600 hover:bg-red-700 transition-all duration-200"
+                            >
+                              Confirm
+                            </button>
+                            <button
+                              onClick={() => setConfirmDelete(null)}
+                              className={`text-xs px-2 py-1 rounded-full transition-all duration-200 ${
+                                isDarkMode 
+                                  ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                              }`}
+                            >
+                              Cancel
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            onClick={() => setConfirmDelete(itemData.id)}
+                            disabled={itemData.status === "borrowed"}
+                            className={`text-xs px-3 py-1 rounded-full transition-all duration-200 ${
+                              itemData.status === "borrowed"
+                                ? isDarkMode
+                                  ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                : 'bg-red-600 hover:bg-red-700 text-white'
+                            }`}
+                            title={itemData.status === "borrowed" ? "Cannot unlist borrowed items" : "Unlist item"}
+                          >
+                            Unlist
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      // Details button for other people's items
+                      <button
+                        className={`text-white text-xs px-3 py-1 rounded-full transition-all duration-200 shadow-md hover:shadow-lg ${
+                          isDarkMode ? 'hover:bg-purple-600' : 'hover:bg-purple-700'
+                        }`}
+                        style={{
+                          backgroundColor: isDarkMode ? "#7c3aed" : "#8b5cf6",
+                        }}
+                        onMouseEnter={(e) => {
+                          const target = e.target as HTMLButtonElement;
+                          target.style.backgroundColor = isDarkMode ? "#6d28d9" : "#7c3aed";
+                        }}
+                        onMouseLeave={(e) => {
+                          const target = e.target as HTMLButtonElement;
+                          target.style.backgroundColor = isDarkMode ? "#7c3aed" : "#8b5cf6";
+                        }}
+                      >
+                        Details
+                      </button>
+                    )}
                   </div>
                 </div>
               ))

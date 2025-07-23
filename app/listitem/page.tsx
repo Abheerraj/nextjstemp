@@ -17,6 +17,7 @@ export default function ListItemPage() {
     condition: "",
     availability: "",
     imageUrl: "",
+    pricePerDay: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -46,15 +47,15 @@ export default function ListItemPage() {
 
     // Simulate form submission
     setTimeout(() => {
-      // Add item to the context
+      // Add item to the context - only pass fields that exist in ListedItem interface
       addItem({
         name: formData.itemName,
-        description: formData.description,
         category: formData.category.charAt(0).toUpperCase() + formData.category.slice(1),
         condition: formData.condition.charAt(0).toUpperCase() + formData.condition.slice(1),
-        availability: formData.availability,
-        imageUrl: formData.imageUrl,
         image: getCategoryEmoji(formData.category),
+        url: formData.imageUrl, // Map imageUrl to url
+        pricePerDay: parseFloat(formData.pricePerDay) || 0,
+        status: "available",
       });
 
       console.log("Item listed:", formData);
@@ -69,6 +70,7 @@ export default function ListItemPage() {
         condition: "",
         availability: "",
         imageUrl: "",
+        pricePerDay: "",
       });
 
       // Reset success state and redirect after 3 seconds
@@ -167,7 +169,7 @@ export default function ListItemPage() {
                       isDarkMode ? "text-gray-300" : "text-neutral-700"
                     }`}
                   >
-                    Item Name
+                    Item Name *
                   </label>
                   <input
                     type="text"
@@ -191,7 +193,7 @@ export default function ListItemPage() {
                       isDarkMode ? "text-gray-300" : "text-neutral-700"
                     }`}
                   >
-                    Category
+                    Category *
                   </label>
                   <select
                     name="category"
@@ -227,7 +229,7 @@ export default function ListItemPage() {
                       isDarkMode ? "text-gray-300" : "text-neutral-700"
                     }`}
                   >
-                    Condition
+                    Condition *
                   </label>
                   <select
                     name="condition"
@@ -255,26 +257,31 @@ export default function ListItemPage() {
                       isDarkMode ? "text-gray-300" : "text-neutral-700"
                     }`}
                   >
-                    Availability
+                    Price Per Day *
                   </label>
-                  <select
-                    name="availability"
-                    value={formData.availability}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-3 rounded-lg border transition-all duration-300 focus:outline-none focus:ring-4 ${
-                      isDarkMode
-                        ? "bg-gray-800 text-white border-gray-600 focus:ring-purple-400"
-                        : "bg-white text-neutral-800 border-purple-200 focus:ring-purple-300"
-                    }`}
-                    required
-                    disabled={isSubmitting}
-                  >
-                    <option value="">Select availability</option>
-                    <option value="Available Immediately">Available Immediately</option>
-                    <option value="Within a Week">Within a Week</option>
-                    <option value="Flexible Schedule">Flexible Schedule</option>
-                    <option value="Weekends Only">Weekends Only</option>
-                  </select>
+                  <div className="relative">
+                    <span className={`absolute left-3 top-1/2 transform -translate-y-1/2 text-sm ${
+                      isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>
+                      $
+                    </span>
+                    <input
+                      type="number"
+                      name="pricePerDay"
+                      value={formData.pricePerDay}
+                      onChange={handleChange}
+                      step="0.01"
+                      min="0"
+                      className={`w-full pl-8 pr-3 py-3 rounded-lg border transition-all duration-300 focus:outline-none focus:ring-4 ${
+                        isDarkMode
+                          ? "bg-gray-800 text-white border-gray-600 focus:ring-purple-400"
+                          : "bg-white text-neutral-800 border-purple-200 focus:ring-purple-300"
+                      }`}
+                      placeholder="5.00"
+                      required
+                      disabled={isSubmitting}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -297,9 +304,13 @@ export default function ListItemPage() {
                       ? "bg-gray-800 text-white border-gray-600 focus:ring-purple-400"
                       : "bg-white text-neutral-800 border-purple-200 focus:ring-purple-300"
                   }`}
-                  required
                   disabled={isSubmitting}
                 ></textarea>
+                <p className={`text-xs mt-1 ${
+                  isDarkMode ? "text-gray-400" : "text-neutral-500"
+                }`}>
+                  Optional: Add more details about your item
+                </p>
               </div>
 
               <div>
@@ -321,7 +332,6 @@ export default function ListItemPage() {
                       ? "bg-gray-800 text-white border-gray-600 focus:ring-purple-400"
                       : "bg-white text-neutral-800 border-purple-200 focus:ring-purple-300"
                   }`}
-                  required
                   disabled={isSubmitting}
                 />
                 <p
@@ -329,8 +339,7 @@ export default function ListItemPage() {
                     isDarkMode ? "text-gray-400" : "text-neutral-500"
                   }`}
                 >
-                  Upload your image to a service like Imgur or use a direct image
-                  URL
+                  Optional: Upload your image to a service like Imgur or use a direct image URL
                 </p>
               </div>
 

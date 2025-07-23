@@ -9,7 +9,11 @@ export default function ChatWidget() {
 
   return (
     <>
-      <div className="fixed bottom-8 right-8 flex flex-col gap-3 z-50">
+      <div
+        className={`fixed bottom-8 flex flex-col gap-3 z-50 transition-all duration-300 ease-in-out ${
+          isChatOpen ? "right-[336px]" : "right-8"
+        }`}
+      >
         {/* Plus Button to navigate to list your item page */}
         <Link href="/listitem">
           <button className="w-12 h-12 rounded-full bg-blue-500 text-white shadow-lg hover:bg-blue-600 transition flex items-center justify-center text-2xl">
