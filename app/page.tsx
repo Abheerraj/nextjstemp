@@ -1,9 +1,45 @@
 "use client";
 
-import { useDarkMode } from "./context/DarkModeContext";
+import { useState } from "react";
+import { useDarkMode } from "./context/DarkModeContext";  // Changed from ../context to ./context
 
-export default function Home() {
+export default function Home() {  // Changed from MyListedPage to Home
   const { isDarkMode } = useDarkMode();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Sample items data
+  const allItems = [
+    { emoji: "🔧", item: "Drill", owner: "John", distance: "300m", category: "tools" },
+    { emoji: "🚲", item: "Bike", owner: "Alice", distance: "1.2km", category: "sports" },
+    { emoji: "🪜", item: "Ladder", owner: "Mike", distance: "600m", category: "tools" },
+    { emoji: "⛺", item: "Tent", owner: "Sarah", distance: "950m", category: "outdoor" },
+    { emoji: "📷", item: "Camera", owner: "Leo", distance: "2km", category: "electronics" },
+    { emoji: "🎲", item: "Board Game", owner: "Alex", distance: "850m", category: "games" },
+    { emoji: "🍳", item: "Frying Pan", owner: "Emma", distance: "400m", category: "kitchen" },
+    { emoji: "📚", item: "Textbook", owner: "David", distance: "700m", category: "books" },
+    { emoji: "🎸", item: "Guitar", owner: "Sophie", distance: "1.5km", category: "misc" },
+    { emoji: "🏓", item: "Ping Pong Table", owner: "Chris", distance: "1.8km", category: "sports" },
+    { emoji: "🔨", item: "Hammer", owner: "Mark", distance: "500m", category: "tools" },
+    { emoji: "🎯", item: "Dartboard", owner: "Lisa", distance: "1.1km", category: "games" },
+  ];
+
+  // Filter items based on search query
+  const filteredItems = allItems.filter(item => 
+    item.item.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.owner.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Show only first 6 items if no search, or all filtered items if searching
+  const displayItems = searchQuery ? filteredItems : allItems.slice(0, 6);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery("");
+  };
 
   return (
     <div className={`min-h-screen font-inter ${
@@ -31,37 +67,54 @@ export default function Home() {
 
       {/* Categories Section */}
       <section className="px-6 py-10 max-w-6xl mx-auto">
-        <h2 className={`text-lg font-medium mb-5 ${
-          isDarkMode ? 'text-white' : 'text-neutral-800'
-        }`}>
-          Browse by Category
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 text-center text-xs">
-          {[
-            "Tools",
-            "Electronics",
-            "Outdoor Gear",
-            "Games",
-            "Kitchen",
-            "Books",
-            "Furniture",
-            "Misc",
-            "Sports",
-            "Clothing",
-            "Garden",
-            "Art & Craft",
-          ].map((cat) => (
-            <div
-              key={cat}
-              className={`p-3 rounded-lg border cursor-pointer transition ${
-                isDarkMode 
-                  ? 'bg-gray-800 border-gray-700 hover:bg-gray-700 hover:border-purple-500 text-white' 
-                  : 'bg-neutral-100 border-neutral-200 hover:bg-blue-50 hover:border-blue-200'
-              }`}
-            >
-              {cat}
-            </div>
-          ))}
+        <div
+          className="rounded-xl border shadow-2xl p-8"
+          style={{
+            backgroundColor: isDarkMode ? "#1f1f23" : "#f8f5ff",
+            borderColor: isDarkMode ? "#374151" : "#e0d4ff",
+            boxShadow: isDarkMode 
+              ? "0 25px 50px -12px rgba(139, 92, 246, 0.4)" 
+              : "0 25px 50px -12px rgba(139, 92, 246, 0.25)",
+          }}
+        >
+          <h2 className={`text-2xl font-semibold mb-8 text-center ${
+            isDarkMode ? 'text-purple-300' : 'text-purple-700'
+          }`}>
+            Browse by Category
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 text-center text-xs">
+            {[
+              "Tools",
+              "Electronics",
+              "Outdoor Gear",
+              "Games",
+              "Kitchen",
+              "Books",
+              "Furniture",
+              "Misc",
+              "Sports",
+              "Clothing",
+              "Garden",
+              "Art & Craft",
+            ].map((cat) => (
+              <div
+                key={cat}
+                className={`p-3 rounded-lg border cursor-pointer transition-all duration-300 hover:scale-110 hover:shadow-lg transform ${
+                  isDarkMode 
+                    ? 'bg-gray-800 border-gray-700 hover:bg-gray-700 hover:border-purple-500 text-white hover:shadow-purple-500/20' 
+                    : 'bg-neutral-100 border-neutral-200 hover:bg-blue-50 hover:border-blue-200 hover:shadow-blue-200/50'
+                }`}
+                style={{
+                  boxShadow: isDarkMode 
+                    ? "0 4px 6px -1px rgba(139, 92, 246, 0.1)"
+                    : "0 4px 6px -1px rgba(59, 130, 246, 0.1)"
+                }}
+                onClick={() => setSearchQuery(cat.toLowerCase().replace(' & ', ' '))}
+              >
+                {cat}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -138,6 +191,7 @@ export default function Home() {
                   background: item.gradient,
                   boxShadow: "0 10px 25px -5px rgba(139, 92, 246, 0.1)",
                 }}
+                onClick={() => setSearchQuery(item.title.toLowerCase())}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = item.hoverGradient;
                   e.currentTarget.style.boxShadow = "0 20px 40px -10px rgba(139, 92, 246, 0.3)";
@@ -200,89 +254,147 @@ export default function Home() {
 
           {/* Centered Search */}
           <div className="flex justify-center mb-8">
-            <input
-              type="text"
-              placeholder="Search to borrow..."
-              className={`border rounded-lg px-6 py-3 w-full max-w-2xl text-base focus:outline-none focus:ring-4 transition-all duration-300 shadow-lg hover:scale-105 hover:shadow-xl ${
-                isDarkMode 
-                  ? 'bg-gray-800 text-white border-gray-600 focus:ring-purple-400 placeholder-gray-400'
-                  : 'bg-white text-neutral-800 border-purple-200 focus:ring-purple-300 placeholder-gray-500'
-              }`}
-              style={{
-                boxShadow: "0 10px 15px -3px rgba(139, 92, 246, 0.1)",
-              }}
-            />
-          </div>
-
-          {/* Items Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              { emoji: "🔧", item: "Drill", owner: "John", distance: "300m" },
-              { emoji: "🚲", item: "Bike", owner: "Alice", distance: "1.2km" },
-              { emoji: "🪜", item: "Ladder", owner: "Mike", distance: "600m" },
-              { emoji: "⛺", item: "Tent", owner: "Sarah", distance: "950m" },
-              { emoji: "📷", item: "Camera", owner: "Leo", distance: "2km" },
-              { emoji: "🎲", item: "Board Game", owner: "Alex", distance: "850m" },
-            ].map(({ emoji, item, owner, distance }) => (
-              <div
-                key={item}
-                className={`flex flex-col gap-2 p-4 border rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer ${
+            <div className="relative w-full max-w-2xl">
+              <input
+                type="text"
+                placeholder="Search for items, owners, or categories..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className={`border rounded-lg px-6 py-3 w-full text-base focus:outline-none focus:ring-4 transition-all duration-300 shadow-lg hover:scale-105 hover:shadow-xl ${
                   isDarkMode 
-                    ? 'bg-gray-800 border-gray-600' 
-                    : 'bg-white border-purple-200'
+                    ? 'bg-gray-800 text-white border-gray-600 focus:ring-purple-400 placeholder-gray-400'
+                    : 'bg-white text-neutral-800 border-purple-200 focus:ring-purple-300 placeholder-gray-500'
                 }`}
                 style={{
                   boxShadow: "0 10px 15px -3px rgba(139, 92, 246, 0.1)",
+                  paddingRight: searchQuery ? "50px" : "24px",
                 }}
-              >
-                <div className="flex justify-between items-center">
-                  <span className="text-xl">{emoji}</span>
-                  <span className={`text-base font-medium ${
-                    isDarkMode ? 'text-white' : 'text-neutral-800'
-                  }`}>{item}</span>
-                  <span className={`text-xs ${
-                    isDarkMode ? 'text-gray-400' : 'text-neutral-400'
-                  }`}>— {owner}</span>
-                </div>
-                {/* Photo box */}
+              />
+              {searchQuery && (
+                <button
+                  onClick={clearSearch}
+                  className={`absolute right-3 top-1/2 transform -translate-y-1/2 p-1 rounded-full transition-all duration-200 hover:scale-110 ${
+                    isDarkMode 
+                      ? 'text-gray-400 hover:text-white hover:bg-gray-700' 
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Search Results Info */}
+          {searchQuery && (
+            <div className="text-center mb-6">
+              <p className={`text-sm ${
+                isDarkMode ? 'text-gray-300' : 'text-gray-600'
+              }`}>
+                {filteredItems.length === 0 
+                  ? `No items found for "${searchQuery}"`
+                  : `Found ${filteredItems.length} item${filteredItems.length !== 1 ? 's' : ''} for "${searchQuery}"`
+                }
+              </p>
+            </div>
+          )}
+
+          {/* Items Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {displayItems.length === 0 ? (
+              <div className="col-span-full text-center py-12">
+                <div className="text-6xl mb-4">🔍</div>
+                <h3 className={`text-lg font-medium mb-2 ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                }`}>
+                  No items found
+                </h3>
+                <p className={`text-sm ${
+                  isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                }`}>
+                  Try searching for something else or browse our categories
+                </p>
+              </div>
+            ) : (
+              displayItems.map(({ emoji, item, owner, distance, category }) => (
                 <div
-                  className="rounded-lg h-32 w-full flex items-center justify-center text-xs"
+                  key={`${item}-${owner}`}
+                  className={`flex flex-col gap-2 p-4 border rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer ${
+                    isDarkMode 
+                      ? 'bg-gray-800 border-gray-600' 
+                      : 'bg-white border-purple-200'
+                  }`}
                   style={{
-                    backgroundColor: isDarkMode ? "#374151" : "#faf5ff",
-                    color: isDarkMode ? "#c084fc" : "#a855f7",
+                    boxShadow: "0 10px 15px -3px rgba(139, 92, 246, 0.1)",
                   }}
                 >
-                  Photo Preview
-                </div>
-                {/* Distance and Details */}
-                <div className="flex justify-between items-center mt-1">
-                  <span className={`text-xs ${
-                    isDarkMode ? 'text-gray-400' : 'text-neutral-500'
-                  }`}>
-                    📍 {distance} away
-                  </span>
-                  <button
-                    className={`text-white text-xs px-3 py-1 rounded-full transition-all duration-200 shadow-md hover:shadow-lg ${
-                      isDarkMode ? 'hover:bg-purple-600' : 'hover:bg-purple-700'
-                    }`}
+                  <div className="flex justify-between items-center">
+                    <span className="text-xl">{emoji}</span>
+                    <span className={`text-base font-medium ${
+                      isDarkMode ? 'text-white' : 'text-neutral-800'
+                    }`}>{item}</span>
+                    <span className={`text-xs ${
+                      isDarkMode ? 'text-gray-400' : 'text-neutral-400'
+                    }`}>— {owner}</span>
+                  </div>
+                  {/* Photo box */}
+                  <div
+                    className="rounded-lg h-32 w-full flex items-center justify-center text-xs"
                     style={{
-                      backgroundColor: isDarkMode ? "#7c3aed" : "#8b5cf6",
-                    }}
-                    onMouseEnter={(e) => {
-                      const target = e.target as HTMLButtonElement;
-                      target.style.backgroundColor = isDarkMode ? "#6d28d9" : "#7c3aed";
-                    }}
-                    onMouseLeave={(e) => {
-                      const target = e.target as HTMLButtonElement;
-                      target.style.backgroundColor = isDarkMode ? "#7c3aed" : "#8b5cf6";
+                      backgroundColor: isDarkMode ? "#374151" : "#faf5ff",
+                      color: isDarkMode ? "#c084fc" : "#a855f7",
                     }}
                   >
-                    Details
-                  </button>
+                    Photo Preview
+                  </div>
+                  {/* Distance and Details */}
+                  <div className="flex justify-between items-center mt-1">
+                    <span className={`text-xs ${
+                      isDarkMode ? 'text-gray-400' : 'text-neutral-500'
+                    }`}>
+                      📍 {distance} away
+                    </span>
+                    <button
+                      className={`text-white text-xs px-3 py-1 rounded-full transition-all duration-200 shadow-md hover:shadow-lg ${
+                        isDarkMode ? 'hover:bg-purple-600' : 'hover:bg-purple-700'
+                      }`}
+                      style={{
+                        backgroundColor: isDarkMode ? "#7c3aed" : "#8b5cf6",
+                      }}
+                      onMouseEnter={(e) => {
+                        const target = e.target as HTMLButtonElement;
+                        target.style.backgroundColor = isDarkMode ? "#6d28d9" : "#7c3aed";
+                      }}
+                      onMouseLeave={(e) => {
+                        const target = e.target as HTMLButtonElement;
+                        target.style.backgroundColor = isDarkMode ? "#7c3aed" : "#8b5cf6";
+                      }}
+                    >
+                      Details
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
+
+          {/* Show more button when not searching */}
+          {!searchQuery && allItems.length > 6 && (
+            <div className="text-center mt-8">
+              <button
+                onClick={() => setSearchQuery("")}
+                className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg ${
+                  isDarkMode 
+                    ? 'bg-purple-700 hover:bg-purple-600 text-white' 
+                    : 'bg-purple-600 hover:bg-purple-700 text-white'
+                }`}
+              >
+                View All Items ({allItems.length})
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
