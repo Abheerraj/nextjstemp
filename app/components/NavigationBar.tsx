@@ -2,14 +2,21 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import SettingsSidebar from "./settingsidebar";
 
 export default function NavigationBar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const handleLogout = () => {
     // Implement your logout logic here
     alert("Logging out...");
+  };
+
+  const handleAppearanceClick = () => {
+    setProfileOpen(false); // Close profile dropdown
+    setSettingsOpen(true); // Open settings sidebar
   };
 
   return (
@@ -113,6 +120,14 @@ export default function NavigationBar() {
                   </li>
                   <li>
                     <button
+                      onClick={handleAppearanceClick}
+                      className="w-full text-left px-4 py-2 hover:bg-blue-50 text-black"
+                    >
+                      Appearance
+                    </button>
+                  </li>
+                  <li>
+                    <button
                       onClick={handleLogout}
                       className="w-full text-left px-4 py-2 hover:bg-blue-50 text-black"
                     >
@@ -162,6 +177,12 @@ export default function NavigationBar() {
           </div>
         )}
       </header>
+
+      {/* Settings Sidebar */}
+      <SettingsSidebar
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+      />
     </>
   );
 }

@@ -1,17 +1,29 @@
 "use client";
 
+import { useDarkMode } from "./context/DarkModeContext";
+
 export default function Home() {
+  const { isDarkMode } = useDarkMode();
+
   return (
-    <div className="min-h-screen bg-white text-neutral-800 font-inter">
+    <div className={`min-h-screen font-inter ${
+      isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-neutral-800'
+    }`}>
       {/* Hero Section */}
       <section
         className="py-20 px-6 text-center"
-        style={{ backgroundColor: "#f0f6ff" }}
+        style={{ 
+          backgroundColor: isDarkMode ? "#1a1a1a" : "#f0f6ff" 
+        }}
       >
-        <h1 className="text-3xl sm:text-4xl font-semibold mb-3 text-blue-700">
+        <h1 className={`text-3xl sm:text-4xl font-semibold mb-3 ${
+          isDarkMode ? 'text-purple-300' : 'text-blue-700'
+        }`}>
           Welcome to Lendly
         </h1>
-        <p className="text-base sm:text-lg max-w-xl mx-auto text-blue-900/70">
+        <p className={`text-base sm:text-lg max-w-xl mx-auto ${
+          isDarkMode ? 'text-purple-200' : 'text-blue-900/70'
+        }`}>
           Share what you own, borrow what you need. Connect with your community
           to save money and reduce waste.
         </p>
@@ -19,7 +31,9 @@ export default function Home() {
 
       {/* Categories Section */}
       <section className="px-6 py-10 max-w-6xl mx-auto">
-        <h2 className="text-lg font-medium mb-5 text-neutral-800">
+        <h2 className={`text-lg font-medium mb-5 ${
+          isDarkMode ? 'text-white' : 'text-neutral-800'
+        }`}>
           Browse by Category
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 text-center text-xs">
@@ -39,7 +53,11 @@ export default function Home() {
           ].map((cat) => (
             <div
               key={cat}
-              className="p-3 bg-neutral-100 rounded-lg border border-neutral-200 hover:bg-blue-50 hover:border-blue-200 cursor-pointer transition"
+              className={`p-3 rounded-lg border cursor-pointer transition ${
+                isDarkMode 
+                  ? 'bg-gray-800 border-gray-700 hover:bg-gray-700 hover:border-purple-500 text-white' 
+                  : 'bg-neutral-100 border-neutral-200 hover:bg-blue-50 hover:border-blue-200'
+              }`}
             >
               {cat}
             </div>
@@ -48,139 +66,252 @@ export default function Home() {
       </section>
 
       {/* Recommendations Section */}
-      <section className="max-w-6xl mx-auto px-4 py-12">
-        <h2 className="text-xl font-semibold mb-6 text-blue-700">
-          Recommended for you
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Card 1 */}
-          <div className="bg-white rounded-xl border border-blue-100 shadow-sm p-4 flex flex-col gap-3">
-            <span className="font-medium text-blue-600 mb-2">
-              Outdoor Gear Picks
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="bg-blue-50 rounded-lg flex flex-col items-center justify-center p-3">
-                <span className="text-2xl">⛺</span>
-                <span className="text-xs mt-1 text-blue-700">Tent</span>
+      <section className="px-6 py-10 max-w-6xl mx-auto">
+        <div
+          className="rounded-xl border shadow-2xl p-8"
+          style={{
+            backgroundColor: isDarkMode ? "#1f1f23" : "#f8f5ff",
+            borderColor: isDarkMode ? "#374151" : "#e0d4ff",
+            boxShadow: isDarkMode 
+              ? "0 25px 50px -12px rgba(139, 92, 246, 0.4)" 
+              : "0 25px 50px -12px rgba(139, 92, 246, 0.25)",
+          }}
+        >
+          <h2
+            className="text-2xl font-semibold mb-8 text-center"
+            style={{ color: isDarkMode ? "#c084fc" : "#7c3aed" }}
+          >
+            Recommended for You
+          </h2>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                title: "Tools",
+                subtitle: "Essential equipment",
+                image: "🔧",
+                gradient: isDarkMode 
+                  ? "linear-gradient(135deg, #374151 0%, #4b5563 100%)"
+                  : "linear-gradient(135deg, #f0f9ff 0%, #dbeafe 100%)",
+                hoverGradient: isDarkMode
+                  ? "linear-gradient(135deg, #4b5563 0%, #6b7280 100%)"
+                  : "linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)"
+              },
+              {
+                title: "Outdoor Gear",
+                subtitle: "Adventure essentials",
+                image: "⛺",
+                gradient: isDarkMode
+                  ? "linear-gradient(135deg, #78350f 0%, #92400e 100%)"
+                  : "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
+                hoverGradient: isDarkMode
+                  ? "linear-gradient(135deg, #92400e 0%, #a16207 100%)"
+                  : "linear-gradient(135deg, #fde68a 0%, #fcd34d 100%)"
+              },
+              {
+                title: "Garden",
+                subtitle: "Green thumb supplies",
+                image: "🌱",
+                gradient: isDarkMode
+                  ? "linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%)"
+                  : "linear-gradient(135deg, #fed7d7 0%, #fbb6ce 100%)",
+                hoverGradient: isDarkMode
+                  ? "linear-gradient(135deg, #991b1b 0%, #b91c1c 100%)"
+                  : "linear-gradient(135deg, #fbb6ce 0%, #f687b3 100%)"
+              },
+              {
+                title: "Sports",
+                subtitle: "Active lifestyle gear",
+                image: "⚽",
+                gradient: isDarkMode
+                  ? "linear-gradient(135deg, #3730a3 0%, #4338ca 100%)"
+                  : "linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)",
+                hoverGradient: isDarkMode
+                  ? "linear-gradient(135deg, #4338ca 0%, #4f46e5 100%)"
+                  : "linear-gradient(135deg, #c7d2fe 0%, #a5b4fc 100%)"
+              }
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="group relative overflow-hidden rounded-2xl cursor-pointer transition-all duration-300 hover:scale-105"
+                style={{
+                  background: item.gradient,
+                  boxShadow: "0 10px 25px -5px rgba(139, 92, 246, 0.1)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = item.hoverGradient;
+                  e.currentTarget.style.boxShadow = "0 20px 40px -10px rgba(139, 92, 246, 0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = item.gradient;
+                  e.currentTarget.style.boxShadow = "0 10px 25px -5px rgba(139, 92, 246, 0.1)";
+                }}
+              >
+                {/* Image/Icon Area */}
+                <div className="h-40 flex items-center justify-center text-6xl p-6">
+                  {item.image}
+                </div>
+                
+                {/* Content Area */}
+                <div className="p-6 pt-0">
+                  <h3 
+                    className={`text-lg font-semibold mb-1 group-hover:text-white transition-colors duration-300 ${
+                      isDarkMode ? 'text-white' : 'text-gray-700'
+                    }`}
+                  >
+                    {item.title}
+                  </h3>
+                  <p 
+                    className={`text-sm group-hover:text-white/90 transition-colors duration-300 ${
+                      isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                    }`}
+                  >
+                    {item.subtitle}
+                  </p>
+                </div>
+
+                {/* Hover Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-600/0 to-purple-900/0 group-hover:from-purple-600/20 group-hover:to-purple-900/40 transition-all duration-300 rounded-2xl"></div>
               </div>
-              <div className="bg-blue-50 rounded-lg flex flex-col items-center justify-center p-3">
-                <span className="text-2xl">🚲</span>
-                <span className="text-xs mt-1 text-blue-700">Bike</span>
-              </div>
-            </div>
-            <button className="mt-2 text-xs text-blue-500 hover:underline self-start">
-              See more
-            </button>
-          </div>
-          {/* Card 2 */}
-          <div className="bg-white rounded-xl border border-blue-100 shadow-sm p-4 flex flex-col gap-3">
-            <span className="font-medium text-blue-600 mb-2">Top Tools</span>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="bg-blue-50 rounded-lg flex flex-col items-center justify-center p-3">
-                <span className="text-2xl">🔧</span>
-                <span className="text-xs mt-1 text-blue-700">Drill</span>
-              </div>
-              <div className="bg-blue-50 rounded-lg flex flex-col items-center justify-center p-3">
-                <span className="text-2xl">🪜</span>
-                <span className="text-xs mt-1 text-blue-700">Ladder</span>
-              </div>
-            </div>
-            <button className="mt-2 text-xs text-blue-500 hover:underline self-start">
-              See more
-            </button>
-          </div>
-          {/* Card 3 */}
-          <div className="bg-white rounded-xl border border-blue-100 shadow-sm p-4 flex flex-col gap-3">
-            <span className="font-medium text-blue-600 mb-2">Game Night</span>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="bg-blue-50 rounded-lg flex flex-col items-center justify-center p-3">
-                <span className="text-2xl">🎲</span>
-                <span className="text-xs mt-1 text-blue-700">Board Game</span>
-              </div>
-              <div className="bg-blue-50 rounded-lg flex flex-col items-center justify-center p-3">
-                <span className="text-2xl">🎮</span>
-                <span className="text-xs mt-1 text-blue-700">Console</span>
-              </div>
-            </div>
-            <button className="mt-2 text-xs text-blue-500 hover:underline self-start">
-              See more
-            </button>
-          </div>
-          {/* Card 4 */}
-          <div className="bg-white rounded-xl border border-blue-100 shadow-sm p-4 flex flex-col gap-3">
-            <span className="font-medium text-blue-600 mb-2">
-              Kitchen & Books
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="bg-blue-50 rounded-lg flex flex-col items-center justify-center p-3">
-                <span className="text-2xl">🍳</span>
-                <span className="text-xs mt-1 text-blue-700">Blender</span>
-              </div>
-              <div className="bg-blue-50 rounded-lg flex flex-col items-center justify-center p-3">
-                <span className="text-2xl">📚</span>
-                <span className="text-xs mt-1 text-blue-700">Books</span>
-              </div>
-            </div>
-            <button className="mt-2 text-xs text-blue-500 hover:underline self-start">
-              See more
-            </button>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Search & Items */}
-      <div className="px-6 py-10 max-w-6xl mx-auto flex flex-col items-center gap-10">
-        {/* Search */}
-        <input
-          type="text"
-          placeholder="Search to borrow..."
-          className="border border-neutral-200 rounded-lg px-4 py-2 w-full max-w-2xl text-base bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-        />
-        {/* Items Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-          {[
-            { emoji: "🔧", item: "Drill", owner: "John", distance: "300m" },
-            { emoji: "🚲", item: "Bike", owner: "Alice", distance: "1.2km" },
-            { emoji: "🪜", item: "Ladder", owner: "Mike", distance: "600m" },
-            { emoji: "⛺", item: "Tent", owner: "Sarah", distance: "950m" },
-            { emoji: "📷", item: "Camera", owner: "Leo", distance: "2km" },
-            { emoji: "🎲", item: "Board Game", owner: "Alex", distance: "850m" },
-          ].map(({ emoji, item, owner, distance }) => (
-            <div
-              key={item}
-              className="flex flex-col gap-2 p-4 bg-white border border-neutral-200 rounded-xl shadow-sm hover:shadow-md transition"
-            >
-              <div className="flex justify-between items-center">
-                <span className="text-xl">{emoji}</span>
-                <span className="text-base font-medium">{item}</span>
-                <span className="text-xs text-neutral-400">— {owner}</span>
+      {/* Search & Items Box */}
+      <div className="px-6 py-10 max-w-6xl mx-auto">
+        <div
+          className="rounded-xl border shadow-2xl p-8"
+          style={{
+            backgroundColor: isDarkMode ? "#1f1f23" : "#f8f5ff",
+            borderColor: isDarkMode ? "#374151" : "#e0d4ff",
+            boxShadow: isDarkMode 
+              ? "0 25px 50px -12px rgba(139, 92, 246, 0.4)" 
+              : "0 25px 50px -12px rgba(139, 92, 246, 0.25)",
+          }}
+        >
+          {/* Centered Title */}
+          <h2
+            className="text-2xl font-semibold mb-8 text-center"
+            style={{ color: isDarkMode ? "#c084fc" : "#7c3aed" }}
+          >
+            Find Items to Borrow
+          </h2>
+
+          {/* Centered Search */}
+          <div className="flex justify-center mb-8">
+            <input
+              type="text"
+              placeholder="Search to borrow..."
+              className={`border rounded-lg px-6 py-3 w-full max-w-2xl text-base focus:outline-none focus:ring-4 transition-all duration-300 shadow-lg hover:scale-105 hover:shadow-xl ${
+                isDarkMode 
+                  ? 'bg-gray-800 text-white border-gray-600 focus:ring-purple-400 placeholder-gray-400'
+                  : 'bg-white text-neutral-800 border-purple-200 focus:ring-purple-300 placeholder-gray-500'
+              }`}
+              style={{
+                boxShadow: "0 10px 15px -3px rgba(139, 92, 246, 0.1)",
+              }}
+            />
+          </div>
+
+          {/* Items Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { emoji: "🔧", item: "Drill", owner: "John", distance: "300m" },
+              { emoji: "🚲", item: "Bike", owner: "Alice", distance: "1.2km" },
+              { emoji: "🪜", item: "Ladder", owner: "Mike", distance: "600m" },
+              { emoji: "⛺", item: "Tent", owner: "Sarah", distance: "950m" },
+              { emoji: "📷", item: "Camera", owner: "Leo", distance: "2km" },
+              { emoji: "🎲", item: "Board Game", owner: "Alex", distance: "850m" },
+            ].map(({ emoji, item, owner, distance }) => (
+              <div
+                key={item}
+                className={`flex flex-col gap-2 p-4 border rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer ${
+                  isDarkMode 
+                    ? 'bg-gray-800 border-gray-600' 
+                    : 'bg-white border-purple-200'
+                }`}
+                style={{
+                  boxShadow: "0 10px 15px -3px rgba(139, 92, 246, 0.1)",
+                }}
+              >
+                <div className="flex justify-between items-center">
+                  <span className="text-xl">{emoji}</span>
+                  <span className={`text-base font-medium ${
+                    isDarkMode ? 'text-white' : 'text-neutral-800'
+                  }`}>{item}</span>
+                  <span className={`text-xs ${
+                    isDarkMode ? 'text-gray-400' : 'text-neutral-400'
+                  }`}>— {owner}</span>
+                </div>
+                {/* Photo box */}
+                <div
+                  className="rounded-lg h-32 w-full flex items-center justify-center text-xs"
+                  style={{
+                    backgroundColor: isDarkMode ? "#374151" : "#faf5ff",
+                    color: isDarkMode ? "#c084fc" : "#a855f7",
+                  }}
+                >
+                  Photo Preview
+                </div>
+                {/* Distance and Details */}
+                <div className="flex justify-between items-center mt-1">
+                  <span className={`text-xs ${
+                    isDarkMode ? 'text-gray-400' : 'text-neutral-500'
+                  }`}>
+                    📍 {distance} away
+                  </span>
+                  <button
+                    className={`text-white text-xs px-3 py-1 rounded-full transition-all duration-200 shadow-md hover:shadow-lg ${
+                      isDarkMode ? 'hover:bg-purple-600' : 'hover:bg-purple-700'
+                    }`}
+                    style={{
+                      backgroundColor: isDarkMode ? "#7c3aed" : "#8b5cf6",
+                    }}
+                    onMouseEnter={(e) => {
+                      const target = e.target as HTMLButtonElement;
+                      target.style.backgroundColor = isDarkMode ? "#6d28d9" : "#7c3aed";
+                    }}
+                    onMouseLeave={(e) => {
+                      const target = e.target as HTMLButtonElement;
+                      target.style.backgroundColor = isDarkMode ? "#7c3aed" : "#8b5cf6";
+                    }}
+                  >
+                    Details
+                  </button>
+                </div>
               </div>
-              {/* Photo box */}
-              <div className="bg-neutral-100 rounded-lg h-32 w-full flex items-center justify-center text-neutral-300 text-xs">
-                Photo Preview
-              </div>
-              {/* Distance and Details */}
-              <div className="flex justify-between items-center mt-1">
-                <span className="text-xs text-neutral-500">
-                  📍 {distance} away
-                </span>
-                <button className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-full transition">
-                  Details
-                </button>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Global Background Blobs & Gradients */}
-      <div className="fixed left-0 top-0 h-full w-2 bg-gradient-to-b from-blue-100 via-pink-100 to-transparent opacity-40 -z-10" />
-      <div className="fixed right-0 top-0 h-full w-2 bg-gradient-to-t from-green-100 via-blue-100 to-transparent opacity-40 -z-10" />
-      <div className="absolute top-0 left-0 w-64 h-64 bg-blue-100 rounded-full blur-2xl opacity-40 -z-10" />
-      <div className="absolute bottom-0 right-0 w-72 h-72 bg-pink-100 rounded-full blur-2xl opacity-30 -z-10" />
-      <div className="absolute top-24 right-1/3 w-56 h-56 bg-yellow-100 rounded-full blur-2xl opacity-30 -z-10" />
-      <div className="absolute bottom-24 left-1/4 w-40 h-40 bg-green-100 rounded-full blur-2xl opacity-30 -z-10" />
-      <div className="absolute top-1/2 left-0 w-32 h-32 bg-purple-100 rounded-full blur-2xl opacity-30 -z-10" />
+      <div className={`fixed left-0 top-0 h-full w-2 opacity-40 -z-10 ${
+        isDarkMode 
+          ? 'bg-gradient-to-b from-purple-900 via-purple-800 to-transparent' 
+          : 'bg-gradient-to-b from-blue-100 via-pink-100 to-transparent'
+      }`} />
+      <div className={`fixed right-0 top-0 h-full w-2 opacity-40 -z-10 ${
+        isDarkMode 
+          ? 'bg-gradient-to-t from-purple-900 via-purple-800 to-transparent' 
+          : 'bg-gradient-to-t from-green-100 via-blue-100 to-transparent'
+      }`} />
+      <div className={`absolute top-0 left-0 w-64 h-64 rounded-full blur-2xl opacity-40 -z-10 ${
+        isDarkMode ? 'bg-purple-900' : 'bg-blue-100'
+      }`} />
+      <div className={`absolute bottom-0 right-0 w-72 h-72 rounded-full blur-2xl opacity-30 -z-10 ${
+        isDarkMode ? 'bg-purple-800' : 'bg-pink-100'
+      }`} />
+      <div className={`absolute top-24 right-1/3 w-56 h-56 rounded-full blur-2xl opacity-30 -z-10 ${
+        isDarkMode ? 'bg-purple-700' : 'bg-yellow-100'
+      }`} />
+      <div className={`absolute bottom-24 left-1/4 w-40 h-40 rounded-full blur-2xl opacity-30 -z-10 ${
+        isDarkMode ? 'bg-purple-600' : 'bg-green-100'
+      }`} />
+      <div className={`absolute top-1/2 left-0 w-32 h-32 rounded-full blur-2xl opacity-30 -z-10 ${
+        isDarkMode ? 'bg-purple-500' : 'bg-purple-100'
+      }`} />
     </div>
   );
 }
