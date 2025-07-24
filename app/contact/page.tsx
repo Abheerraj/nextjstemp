@@ -36,13 +36,7 @@ export default function ContactPage() {
       const result = await emailjs.send(
         process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
         process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        {
-          from_name: formData.name,
-          from_email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
-          to_email: 'gsus3520@gmail.com',
-        },
+        formData,
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
       );
 
