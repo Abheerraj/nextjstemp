@@ -29,13 +29,13 @@ export default function ContactPage() {
     setError("");
 
     try {
-      // Initialize EmailJS
-      emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!);
+      // Initialize EmailJS with hardcoded values
+      emailjs.init('qXjCxUZXyfLqAT2PO');
       
-      // Send email directly from client - FIXED VERSION
+      // Send email using hardcoded values
       const result = await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        'service_3mydifu',           // serviceId
+        'template_ou93sea',          // templateId
         {
           from_name: formData.name,
           from_email: formData.email,
@@ -43,7 +43,7 @@ export default function ContactPage() {
           message: formData.message,
           to_email: 'gsus3520@gmail.com'
         },
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+        'qXjCxUZXyfLqAT2PO'         // publicKey
       );
 
       console.log('Email sent successfully:', result);
