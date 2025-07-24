@@ -1,30 +1,44 @@
-import { Inter } from "next/font/google";
+import type { Metadata } from "next";
 import "./globals.css";
+import NavigationBar from "./components/NavigationBar";
+import ChatWidget from "./components/ChatWidget";
+import ChatSidebar from "./components/ChatSidebar";
 import { DarkModeProvider } from "./context/DarkModeContext";
 import { ListedItemsProvider } from "./context/ListedItemsContext";
 import { BorrowedItemsProvider } from "./context/BorrowedItemsContext";
-import NavBar from "./components/NavigationBar";
 
-const inter = Inter({ subsets: ["latin"] });
-
-export const metadata = {
-  title: "Lendly",
-  description: "Share what you own, borrow what you need",
+export const metadata: Metadata = {
+  title: "Lendly - Share and Borrow with Your Community",
+  description:
+    "Share what you own, borrow what you need. Connect with your community to save money and reduce waste.",
 };
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className="antialiased relative font-sans">
         <DarkModeProvider>
           <ListedItemsProvider>
             <BorrowedItemsProvider>
-              <NavBar />
-              {children}
+              {/* Persistent Navigation Bar */}
+              <NavigationBar />
+
+              {/* Render Page-specific Content */}
+              <main>{children}</main>
+
+              {/* Footer */}
+              <footer
+                className="py-5 text-center text-xs text-white border-t border-neutral-200"
+                style={{ backgroundColor: "#0B132B" }}
+              >
+                Powered by Next.js · Built for generous neighbours 🤝
+              </footer>
+
+              {/* Fixed Action Buttons */}
+              <ChatWidget />
+              <ChatSidebar />
             </BorrowedItemsProvider>
           </ListedItemsProvider>
         </DarkModeProvider>

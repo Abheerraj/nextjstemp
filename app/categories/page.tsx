@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useDarkMode } from "../context/DarkModeContext";
 import { useListedItems } from "../context/ListedItemsContext";
 import { useBorrowedItems } from "../context/BorrowedItemsContext";
 import toast, { Toaster } from 'react-hot-toast';
 
-export default function CategoriesPage() {
+function CategoriesContent() {
   const { isDarkMode } = useDarkMode();
   const { listedItems } = useListedItems();
   const { addBorrowedItem, isItemBorrowed } = useBorrowedItems();
@@ -25,6 +25,75 @@ export default function CategoriesPage() {
 
   // Ref for scrolling to items section
   const itemsSectionRef = useRef<HTMLDivElement>(null);
+
+  // Sample items data with categories
+  const sampleItems = useMemo(() => [
+    { id: 101, emoji: "🔧", item: "Drill", owner: "John", distance: "300m", category: "tools", isOwn: false, status: "available" },
+    { id: 102, emoji: "🚲", item: "Bike", owner: "Alice", distance: "1.2km", category: "sports", isOwn: false, status: "available" },
+    { id: 103, emoji: "🪜", item: "Ladder", owner: "Mike", distance: "600m", category: "tools", isOwn: false, status: "available" },
+    { id: 104, emoji: "⛺", item: "Tent", owner: "Sarah", distance: "950m", category: "outdoor gear", isOwn: false, status: "available" },
+    { id: 105, emoji: "🍳", item: "Frying Pan", owner: "Emma", distance: "400m", category: "kitchen", isOwn: false, status: "available" },
+    { id: 106, emoji: "📚", item: "Textbook", owner: "David", distance: "700m", category: "books", isOwn: false, status: "available" },
+    { id: 107, emoji: "🎸", item: "Guitar", owner: "Sophie", distance: "1.5km", category: "misc", isOwn: false, status: "available" },
+    { id: 108, emoji: "🏓", item: "Ping Pong Table", owner: "Chris", distance: "1.8km", category: "sports", isOwn: false, status: "available" },
+    { id: 109, emoji: "🔨", item: "Hammer", owner: "Mark", distance: "500m", category: "tools", isOwn: false, status: "available" },
+    { id: 110, emoji: "🎯", item: "Dartboard", owner: "Lisa", distance: "1.1km", category: "games", isOwn: false, status: "available" },
+    { id: 111, emoji: "📱", item: "Camera", owner: "Alex", distance: "800m", category: "electronics", isOwn: false, status: "available" },
+    { id: 112, emoji: "🪑", item: "Folding Chair", owner: "Maria", distance: "1km", category: "furniture", isOwn: false, status: "available" },
+    { id: 113, emoji: "👕", item: "Tuxedo", owner: "James", distance: "1.3km", category: "clothing", isOwn: false, status: "available" },
+    { id: 114, emoji: "🌱", item: "Lawn Mower", owner: "Robert", distance: "900m", category: "garden", isOwn: false, status: "available" },
+    { id: 115, emoji: "🎨", item: "Easel", owner: "Anna", distance: "1.1km", category: "art & craft", isOwn: false, status: "available" },
+  ], []);
+
+  // Convert your listed items to the same format
+  const ownItems = useMemo(() => listedItems.map(item => ({
+    id: item.id,
+    emoji: item.image,
+    item: item.name,
+    owner: "You",
+    distance: "0m",
+    category: item.category.toLowerCase(),
+    isOwn: true,
+    status: item.status
+  })), [listedItems]);
+
+  // Combine all items
+  const allItems = useMemo(() => [...ownItems, ...sampleItems], [ownItems, sampleItems]);
+
+  // Filter items by selected category and search query
+  const categoryItems = useMemo(() => {
+    if (!selectedCategory) return [];
+    
+    let filteredItems = allItems.filter(item => 
+      item.category.toLowerCase() === selectedCategory.toLowerCase()
+    );
+
+    // Apply search filter if there's a search query
+    if (searchQuery.trim()) {
+      filteredItems = filteredItems.filter(item =>
+        item.item.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.owner.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    return filteredItems;
+  }, [allItems, selectedCategory, searchQuery]);
+
+  // Count items per category
+  const categories = useMemo(() => [
+    { name: "Tools", emoji: "🔧", description: "Power tools, hand tools, and equipment", count: allItems.filter(item => item.category === "tools").length },
+    { name: "Electronics", emoji: "📱", description: "Gadgets, devices, and tech equipment", count: allItems.filter(item => item.category === "electronics").length },
+    { name: "Outdoor Gear", emoji: "⛺", description: "Camping, hiking, and outdoor equipment", count: allItems.filter(item => item.category === "outdoor gear").length },
+    { name: "Games", emoji: "🎯", description: "Board games, video games, and puzzles", count: allItems.filter(item => item.category === "games").length },
+    { name: "Kitchen", emoji: "🍳", description: "Appliances, cookware, and utensils", count: allItems.filter(item => item.category === "kitchen").length },
+    { name: "Books", emoji: "📚", description: "Textbooks, novels, and reference materials", count: allItems.filter(item => item.category === "books").length },
+    { name: "Furniture", emoji: "🪑", description: "Tables, chairs, and home furnishings", count: allItems.filter(item => item.category === "furniture").length },
+    { name: "Sports", emoji: "⚽", description: "Sports equipment and fitness gear", count: allItems.filter(item => item.category === "sports").length },
+    { name: "Clothing", emoji: "👕", description: "Special occasion and seasonal wear", count: allItems.filter(item => item.category === "clothing").length },
+    { name: "Garden", emoji: "🌱", description: "Gardening tools and lawn equipment", count: allItems.filter(item => item.category === "garden").length },
+    { name: "Art & Craft", emoji: "🎨", description: "Art supplies and crafting materials", count: allItems.filter(item => item.category === "art & craft").length },
+    { name: "Misc", emoji: "📦", description: "Everything else that doesn&apos;t fit above", count: allItems.filter(item => item.category === "misc").length },
+  ], [allItems]);
 
   // Handle URL parameter for pre-selected category
   useEffect(() => {
@@ -64,78 +133,9 @@ export default function CategoriesPage() {
     }
   }, [selectedCategory]);
 
-  // Sample items data with categories
-  const sampleItems = [
-    { id: 101, emoji: "🔧", item: "Drill", owner: "John", distance: "300m", category: "tools", isOwn: false, status: "available" },
-    { id: 102, emoji: "🚲", item: "Bike", owner: "Alice", distance: "1.2km", category: "sports", isOwn: false, status: "available" },
-    { id: 103, emoji: "🪜", item: "Ladder", owner: "Mike", distance: "600m", category: "tools", isOwn: false, status: "available" },
-    { id: 104, emoji: "⛺", item: "Tent", owner: "Sarah", distance: "950m", category: "outdoor gear", isOwn: false, status: "available" },
-    { id: 105, emoji: "🍳", item: "Frying Pan", owner: "Emma", distance: "400m", category: "kitchen", isOwn: false, status: "available" },
-    { id: 106, emoji: "📚", item: "Textbook", owner: "David", distance: "700m", category: "books", isOwn: false, status: "available" },
-    { id: 107, emoji: "🎸", item: "Guitar", owner: "Sophie", distance: "1.5km", category: "misc", isOwn: false, status: "available" },
-    { id: 108, emoji: "🏓", item: "Ping Pong Table", owner: "Chris", distance: "1.8km", category: "sports", isOwn: false, status: "available" },
-    { id: 109, emoji: "🔨", item: "Hammer", owner: "Mark", distance: "500m", category: "tools", isOwn: false, status: "available" },
-    { id: 110, emoji: "🎯", item: "Dartboard", owner: "Lisa", distance: "1.1km", category: "games", isOwn: false, status: "available" },
-    { id: 111, emoji: "📱", item: "Camera", owner: "Alex", distance: "800m", category: "electronics", isOwn: false, status: "available" },
-    { id: 112, emoji: "🪑", item: "Folding Chair", owner: "Maria", distance: "1km", category: "furniture", isOwn: false, status: "available" },
-    { id: 113, emoji: "👕", item: "Tuxedo", owner: "James", distance: "1.3km", category: "clothing", isOwn: false, status: "available" },
-    { id: 114, emoji: "🌱", item: "Lawn Mower", owner: "Robert", distance: "900m", category: "garden", isOwn: false, status: "available" },
-    { id: 115, emoji: "🎨", item: "Easel", owner: "Anna", distance: "1.1km", category: "art & craft", isOwn: false, status: "available" },
-  ];
-
-  // Convert your listed items to the same format
-  const ownItems = listedItems.map(item => ({
-    id: item.id,
-    emoji: item.image,
-    item: item.name,
-    owner: "You",
-    distance: "0m",
-    category: item.category.toLowerCase(),
-    isOwn: true,
-    status: item.status
-  }));
-
-  // Combine all items
-  const allItems = useMemo(() => [...ownItems, ...sampleItems], [ownItems]);
-
-  // Filter items by selected category and search query
-  const categoryItems = useMemo(() => {
-    if (!selectedCategory) return [];
-    
-    let filteredItems = allItems.filter(item => 
-      item.category.toLowerCase() === selectedCategory.toLowerCase()
-    );
-
-    // Apply search filter if there's a search query
-    if (searchQuery.trim()) {
-      filteredItems = filteredItems.filter(item =>
-        item.item.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.owner.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    return filteredItems;
-  }, [allItems, selectedCategory, searchQuery]);
-
-  // Count items per category
-  const categories = [
-    { name: "Tools", emoji: "🔧", description: "Power tools, hand tools, and equipment", count: allItems.filter(item => item.category === "tools").length },
-    { name: "Electronics", emoji: "📱", description: "Gadgets, devices, and tech equipment", count: allItems.filter(item => item.category === "electronics").length },
-    { name: "Outdoor Gear", emoji: "⛺", description: "Camping, hiking, and outdoor equipment", count: allItems.filter(item => item.category === "outdoor gear").length },
-    { name: "Games", emoji: "🎯", description: "Board games, video games, and puzzles", count: allItems.filter(item => item.category === "games").length },
-    { name: "Kitchen", emoji: "🍳", description: "Appliances, cookware, and utensils", count: allItems.filter(item => item.category === "kitchen").length },
-    { name: "Books", emoji: "📚", description: "Textbooks, novels, and reference materials", count: allItems.filter(item => item.category === "books").length },
-    { name: "Furniture", emoji: "🪑", description: "Tables, chairs, and home furnishings", count: allItems.filter(item => item.category === "furniture").length },
-    { name: "Sports", emoji: "⚽", description: "Sports equipment and fitness gear", count: allItems.filter(item => item.category === "sports").length },
-    { name: "Clothing", emoji: "👕", description: "Special occasion and seasonal wear", count: allItems.filter(item => item.category === "clothing").length },
-    { name: "Garden", emoji: "🌱", description: "Gardening tools and lawn equipment", count: allItems.filter(item => item.category === "garden").length },
-    { name: "Art & Craft", emoji: "🎨", description: "Art supplies and crafting materials", count: allItems.filter(item => item.category === "art & craft").length },
-    { name: "Misc", emoji: "📦", description: "Everything else that doesn't fit above", count: allItems.filter(item => item.category === "misc").length },
-  ];
-
   const handleBorrowClick = (item: {id: number, item: string, owner: string}) => {
     if (item.owner === "You") {
-      toast.error("You can't borrow your own item!", {
+      toast.error("You can&apos;t borrow your own item!", {
         position: 'top-right',
         icon: '🚫',
       });
@@ -160,14 +160,16 @@ export default function CategoriesPage() {
   const handleBorrowSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!borrowModal) return;
+    
     // Find the item data to get emoji
-    const itemData = sampleItems.find(item => item.id === borrowModal!.id);
+    const itemData = sampleItems.find(item => item.id === borrowModal.id);
     
     // Add to borrowed items with full details
     const borrowedItem = {
-      id: borrowModal!.id,
-      item: borrowModal!.item,
-      owner: borrowModal!.owner,
+      id: borrowModal.id,
+      item: borrowModal.item,
+      owner: borrowModal.owner,
       emoji: itemData?.emoji || "📦",
       borrowDate: new Date().toLocaleDateString(),
       duration: borrowForm.duration,
@@ -181,7 +183,7 @@ export default function CategoriesPage() {
     
     // Show success toast notification
     toast.success(
-      `Successfully borrowed ${borrowModal!.item} from ${borrowModal!.owner}!`,
+      `Successfully borrowed ${borrowModal.item} from ${borrowModal.owner}!`,
       {
         duration: 4000,
         position: 'top-right',
@@ -202,10 +204,6 @@ export default function CategoriesPage() {
 
   const closeBorrowModal = () => {
     setBorrowModal(null);
-  };
-
-  const clearSearch = () => {
-    setSearchQuery("");
   };
 
   const handleCategorySelect = (categoryName: string) => {
@@ -271,7 +269,7 @@ export default function CategoriesPage() {
         }}
       />
 
-      {/* Borrow Modal - keeping existing modal code */}
+      {/* Borrow Modal */}
       {borrowModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div
@@ -744,5 +742,30 @@ export default function CategoriesPage() {
         isDarkMode ? 'bg-purple-800' : 'bg-pink-100'
       }`} />
     </div>
+  );
+}
+
+function LoadingCategories() {
+  const { isDarkMode } = useDarkMode();
+  
+  return (
+    <div className={`min-h-screen font-inter flex items-center justify-center ${
+      isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-neutral-800'
+    }`}>
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-4"></div>
+        <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          Loading categories...
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default function CategoriesPage() {
+  return (
+    <Suspense fallback={<LoadingCategories />}>
+      <CategoriesContent />
+    </Suspense>
   );
 }
