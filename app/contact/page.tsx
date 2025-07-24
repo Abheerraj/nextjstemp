@@ -58,7 +58,20 @@ export default function ContactPage() {
     } catch (error) {
       console.error('FAILED...', error);
       console.error('Error details:', error);
-      setError(`Failed to send message: ${error.text || error.message || 'Unknown error'}`);
+      
+      // Properly handle the error type without using 'any'
+      let errorMessage = 'Unknown error';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (error && typeof error === 'object' && 'text' in error) {
+        errorMessage = (error as {text: string}).text;
+      } else if (error && typeof error === 'object' && 'message' in error) {
+        errorMessage = (error as {message: string}).message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+      
+      setError(`Failed to send message: ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
     }
