@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useDarkMode } from "../context/DarkModeContext";
+import emailjs from '@emailjs/browser';
 
 export default function ContactPage() {
   const { isDarkMode } = useDarkMode();
@@ -11,18 +12,53 @@ export default function ContactPage() {
     subject: "",
     message: ""
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    // Clear any previous errors
+    if (error) setError("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log("Form submitted:", formData);
-    // Reset form
-    setFormData({ name: "", email: "", subject: "", message: "" });
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      // Initialize EmailJS
+      emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!);
+      
+      // Send email directly from client
+      const result = await emailjs.send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          to_email: 'gsus3520@gmail.com',
+        },
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+      );
+
+      console.log('Email sent successfully:', result);
+      setIsSuccess(true);
+      setFormData({ name: "", email: "", subject: "", message: "" });
+      
+      // Reset success message after 5 seconds
+      setTimeout(() => setIsSuccess(false), 5000);
+      
+    } catch (error) {
+      console.error('Error sending email:', error);
+      setError('Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -156,6 +192,18 @@ export default function ContactPage() {
                 />
               </div>
 
+              {error && (
+                <div className="text-red-500 text-sm mt-2">
+                  {error}
+                </div>
+              )}
+
+              {isSuccess && (
+                <div className="text-green-500 text-sm mt-2">
+                  Message sent successfully! We&apos;ll get back to you soon.
+                </div>
+              )}
+
               <button
                 type="submit"
                 className={`w-full px-6 py-3 rounded-lg font-medium transition-colors ${
@@ -163,8 +211,9 @@ export default function ContactPage() {
                     ? 'bg-purple-600 hover:bg-purple-700 text-white' 
                     : 'bg-purple-600 hover:bg-purple-700 text-white'
                 }`}
+                disabled={isSubmitting}
               >
-                Send Message
+                {isSubmitting ? 'Sending...' : 'Send Message'}
               </button>
             </form>
           </div>
