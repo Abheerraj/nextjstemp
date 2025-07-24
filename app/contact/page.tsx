@@ -32,11 +32,17 @@ export default function ContactPage() {
       // Initialize EmailJS
       emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!);
       
-      // Send email directly from client
+      // Send email directly from client - FIXED VERSION
       const result = await emailjs.send(
         process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
         process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        formData,
+        {
+          from_name: formData.name,
+          from_email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          to_email: 'gsus3520@gmail.com'
+        },
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
       );
 
