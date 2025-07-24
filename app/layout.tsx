@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import NavigationBar from "./components/NavigationBar";
 import ChatWidget from "./components/ChatWidget";
-import ChatSidebar from "./components/ChatSidebar";
 import { DarkModeProvider } from "./context/DarkModeContext";
 import { ListedItemsProvider } from "./context/ListedItemsContext";
 import { BorrowedItemsProvider } from "./context/BorrowedItemsContext";
@@ -38,7 +37,6 @@ export default function RootLayout({
 
               {/* Fixed Action Buttons */}
               <ChatWidget />
-              <ChatSidebar />
             </BorrowedItemsProvider>
           </ListedItemsProvider>
         </DarkModeProvider>
