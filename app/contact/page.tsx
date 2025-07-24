@@ -29,24 +29,26 @@ export default function ContactPage() {
     setError("");
 
     try {
-      // Initialize EmailJS with hardcoded values
-      emailjs.init('qXjCxUZXyfLqAT2PO');
-      
-      // Send email using hardcoded values
+      // Try a more compatible approach for GitHub Pages
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        reply_to: formData.email,
+      };
+
+      console.log('Sending email with params:', templateParams);
+
+      // Use emailjs.sendForm instead of emailjs.send
       const result = await emailjs.send(
-        'service_3mydifu',           // serviceId
-        'template_ou93sea',          // templateId
-        {
-          from_name: formData.name,
-          from_email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
-          to_email: 'gsus3520@gmail.com'
-        },
-        'qXjCxUZXyfLqAT2PO'         // publicKey
+        'service_3mydifu',
+        'template_ou93sea',
+        templateParams,
+        'qXjCxUZXyfLqAT2PO'
       );
 
-      console.log('Email sent successfully:', result);
+      console.log('SUCCESS!', result.status, result.text);
       setIsSuccess(true);
       setFormData({ name: "", email: "", subject: "", message: "" });
       
@@ -54,8 +56,9 @@ export default function ContactPage() {
       setTimeout(() => setIsSuccess(false), 5000);
       
     } catch (error) {
-      console.error('Error sending email:', error);
-      setError('Failed to send message. Please try again.');
+      console.error('FAILED...', error);
+      console.error('Error details:', error);
+      setError(`Failed to send message: ${error.text || error.message || 'Unknown error'}`);
     } finally {
       setIsSubmitting(false);
     }
