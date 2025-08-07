@@ -1,4 +1,3 @@
-Idk what to put here
-
-just explore the website ig
-
+THIS IS A MOCK WEBSITE
+Phone number on contact page is just random numbers
+About page is mostly made up for a proffesional look

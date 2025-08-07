@@ -15,6 +15,7 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [callNotify, setCallNotify] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -77,10 +78,14 @@ export default function ContactPage() {
     }
   };
 
+  // Call button handler
+  const handleCallClick = () => {
+    setCallNotify(true);
+    setTimeout(() => setCallNotify(false), 3500);
+  };
+
   return (
-    <div className={`min-h-screen font-inter ${
-      isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-neutral-800'
-    }`}>
+    <div className={`min-h-screen font-inter ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-neutral-800'}`}>
       {/* Hero Section */}
       <section
         className="py-20 px-6 text-center"
@@ -278,11 +283,15 @@ export default function ContactPage() {
                 }`}>
                   +1 (555) 123-4567
                 </div>
-                <button className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                  isDarkMode 
-                    ? 'bg-purple-600 hover:bg-purple-700 text-white' 
-                    : 'bg-purple-600 hover:bg-purple-700 text-white'
-                }`}>
+                <button
+                  type="button"
+                  onClick={handleCallClick}
+                  className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+                    isDarkMode 
+                      ? 'bg-purple-600 hover:bg-purple-700 text-white' 
+                      : 'bg-purple-600 hover:bg-purple-700 text-white'
+                  }`}
+                >
                   Call Now
                 </button>
               </div>
@@ -310,6 +319,14 @@ export default function ContactPage() {
           </div>
         </div>
       </div>
+
+      {/* Notification */}
+      {callNotify && (
+        <div className="fixed top-6 right-6 z-50 bg-purple-700 text-white px-6 py-4 rounded-xl shadow-lg animate-in fade-in slide-in-from-top-2 duration-300">
+          Calling Lendly Support<br />
+          <span className="text-xs opacity-80">(This is a MOCK website, nothing is really happening)</span>
+        </div>
+      )}
 
       {/* Background Elements */}
       <div className={`fixed left-0 top-0 h-full w-2 opacity-40 -z-10 ${
